@@ -38,6 +38,8 @@ Add the following to your pom.xml:
 </build>
 ```
 
+When you do this, your builds will start failing if you include a dependency that depwatch doesn't recognize (or, worse, the dependency doesn't declare a license at all).
+
 **NOTE:** As of this writing (late at night on 2013-06-21), the artifact hasn't been pushed into Sonatype's Central Repository. I did everything I could to get it in there, but it takes a day or two. If you happen to be seeing this over the weekend, please be patient.
 
 Is this it?
