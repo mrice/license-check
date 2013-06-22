@@ -11,9 +11,19 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	<packaging>maven-plugin</packaging>
 	<name>License Check Plugin</name>
 	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
-
+	<url>http://depwatch.org</url>
 	<inceptionYear>2013</inceptionYear>
 
+	<scm>
+		<url>https://github.com/mrice/license-check</url>
+		<connection>scm:git:git@github.com:mrice/license-check.git</connection>
+	</scm>
+	<licenses>
+		<license>
+			<name>MIT license</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
 	<developers>
 		<developer>
 			<name>Michael Rice</name>
