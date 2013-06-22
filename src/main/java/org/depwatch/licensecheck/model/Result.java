@@ -2,15 +2,14 @@ package org.depwatch.licensecheck.model;
 
 public class Result {
 
-    private String result;
+    private String licenseDeclared;
     private String license;
-    private String artifact;
 
-    public String getResult() {
-        return result;
+    public String getLicensedDeclared() {
+        return licenseDeclared;
     }
-    public void setResult(String result) {
-        this.result = result;
+    public void setLicenseDeclared(String licenseDeclared) {
+        this.licenseDeclared = licenseDeclared;
     }
 
     public String getLicense() {
@@ -20,11 +19,5 @@ public class Result {
         this.license = license;
     }
 
-    public String getArtifact() {
-        return artifact;
-    }
-    public void setArtifact(String artifact) {
-        this.artifact = artifact;
-    }
 
 }

@@ -48,7 +48,7 @@ public class LicenseCheckMojo extends AbstractMojo {
      * </configuration>
      * 
      */
-    @Parameter( property = "check.host", defaultValue = "http://www.depwatch.org/api/license-check/" )
+    @Parameter( property = "check.host", defaultValue = "http://depwatch.org/api/license-check/" )
     private String host;
 
     /**
@@ -112,13 +112,13 @@ public class LicenseCheckMojo extends AbstractMojo {
             String responseBody = client.execute(get, responseHandler);
 
             Result serverResult = gson.fromJson(responseBody, Result.class);
-            if ("ok".equals(serverResult.getResult())) {
+            if ("ok".equals(serverResult.getLicensedDeclared())) {
                 result = true;
-                String msg = "..."+serverResult.getResult()+": "+serverResult.getLicense();
+                String msg = "..."+serverResult.getLicensedDeclared()+": "+serverResult.getLicense();
                 getLog().info(msg);
             } else {
                 result = false;
-                String msg = "..."+serverResult.getResult()+": ";
+                String msg = "..."+serverResult.getLicensedDeclared()+": ";
                 if (serverResult.getLicense()==null||serverResult.getLicense().length()==0)
                     msg+=": NO LICENSE FOUND";
                 else
