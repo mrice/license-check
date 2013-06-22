@@ -1,4 +1,4 @@
-package com.michaelrice.licensecheck.mojo;
+package org.depwatch.licensecheck.mojo;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -16,10 +16,19 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.depwatch.licensecheck.model.Result;
 
 import com.google.gson.Gson;
-import com.michaelrice.licensecheck.model.Result;
 
+/**
+ * This early version of the license check plug in simply checks to see whether there is a license
+ * declared for a given dependency. This is important because, technically, if no license is 
+ * associated with a given dependency, that could mean that the owner of the dependency retains
+ * all rights associated with the library. Future versions of the license-check will go further.
+ * 
+ * @author michael rice
+ *
+ */
 @Mojo(name="check")
 public class LicenseCheckMojo extends AbstractMojo {
 
@@ -31,6 +40,32 @@ public class LicenseCheckMojo extends AbstractMojo {
     @Parameter( defaultValue = "${settings.offline}" )
     private boolean offline;
 
+    /**
+     * The validation server, to override, include the following configuration:
+     * 
+     * <configuration>
+     *     <host>http://localhost:8081/validate.php?id=</host>
+     * </configuration>
+     * 
+     */
+    @Parameter( property = "check.host", defaultValue = "http://www.depwatch.org/api/license-check/" )
+    private String host;
+
+    /**
+     * Because this is very much preview, the point of this is to give me a way to notify
+     * you when your library is available on the server.
+     * 
+     * <configuration>
+     *     <notificationEmail>me@michaelrice.com</notificationEmail>
+     * </configuration>
+     * 
+     */
+    @Parameter( property = "check.notificationEmail" )
+    private String notificationEmail;
+
+    /**
+     * This is the primary entry point into the Maven plugin.
+     */
     @SuppressWarnings("rawtypes")
     public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -55,15 +90,27 @@ public class LicenseCheckMojo extends AbstractMojo {
 
     }
 
-    public boolean runOnlineArtifactCheck(String artifactId) {
+    /**
+     * This method actually runs the artifact's coordinates against a validation server.
+     * Right now, all the logic is buried into this big function.
+     * 
+     * @param dependencyCoordinate
+     * @return
+     */
+    public boolean runOnlineArtifactCheck(String dependencyCoordinate) {
 
         boolean result = false;
         HttpClient client = new DefaultHttpClient();
         try {
-            HttpGet get = new HttpGet("http://localhost:8081/validate.php?id="+artifactId);
+
+            String url = host+dependencyCoordinate;
+            if (notificationEmail!=null) {
+                url += "?notify="+notificationEmail;
+            }
+            HttpGet get = new HttpGet(url);
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
             String responseBody = client.execute(get, responseHandler);
-            
+
             Result serverResult = gson.fromJson(responseBody, Result.class);
             if ("ok".equals(serverResult.getResult())) {
                 result = true;
@@ -84,7 +131,7 @@ public class LicenseCheckMojo extends AbstractMojo {
         } finally {
             client.getConnectionManager().shutdown();
         }
-        
+
         return result;
     }
 

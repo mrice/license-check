@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.michaelrice</groupId>
+	<groupId>org.depwatch</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
+	<version>0.1-PREVIEW</version>
 	<packaging>maven-plugin</packaging>
-	<name>License Compatibility Check Plugin</name>
-	<version>0.1-SNAPSHOT</version>
-	<description>Maven plugin to report on the licenses in use and (eventually) check compatibility.</description>
+	<name>License Check Plugin</name>
+	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
 
 	<inceptionYear>2013</inceptionYear>
 
@@ -17,9 +19,9 @@
 			<name>Michael Rice</name>
 			<email>me@michaelrice.com</email>
 			<roles>
-				<role>Lead Developer</role>
+				<role>Developer</role>
 			</roles>
-			<timezone>+1</timezone>
+			<timezone>-7</timezone>
 		</developer>
 	</developers>
 
@@ -65,7 +67,7 @@
 			<version>4.1</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<pluginManagement>
 			<plugins>

@@ -1,4 +1,4 @@
-package com.michaelrice.licensecheck.model;
+package org.depwatch.licensecheck.model;
 
 public class Result {
 
