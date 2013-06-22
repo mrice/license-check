@@ -5,11 +5,11 @@ license-check
 
 What is it?
 --------------
-For now, license-check just checks to make sure that your Maven dependencies have licensed declared in the Central Repo. Much more to come.
+For now, license-check just checks to make sure that your Maven dependencies have s licensed declared in the Central Repo. It basically looks at each dependency and runes a query against the Central Repository to see if the dependency declares a license that [depwatch.org](http://depwatch.org) recognizes.
 
 Isn't there already something like this?
 ---------------
-**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however, all it does is make sure that all the artifacts you've included in the project actually declare a license that depwatch recognizes as one of the opensource.org registered licenses. 
+**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however, all it does is make sure that all the artifacts you've included in the project actually declare a license that depwatch recognizes as one of the [opensource.org](http://www.opensource.org/) registered licenses. 
 
 This doesn't sound like much, but it's critically important. If the license isn't recognized or isn't declared at all, it's very possible that the authors or contributors could claim fully copyright in the library and expose you to a lot of liability. 
 
