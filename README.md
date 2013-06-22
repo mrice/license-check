@@ -5,7 +5,7 @@ license-check
 
 What is it?
 --------------
-For now, license-check just checks to make sure that your Maven dependencies have s licensed declared in the Central Repo. It basically looks at each dependency and runes a query against the Central Repository to see if the dependency declares a license that [depwatch.org](http://depwatch.org) recognizes.
+For now, license-check just checks to make sure that your Maven dependencies have a license declared in the Central Repo. It basically looks at each dependency and runs a query against the Central Repo to see if the dependency declares a license that [depwatch.org](http://depwatch.org) recognizes. If not, then your build will **fail**.
 
 Isn't there already something like this?
 ---------------
