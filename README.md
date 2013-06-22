@@ -15,26 +15,7 @@ This doesn't sound like much, but it's critically important. If the license isn'
 
 How to use it
 ---------------
-First, you'll need to add the Sonatype repo to your pom for now. Obviously I'll get a release version of the license-check out on the public repos soon, but this is the way to grab the most recent code.
-
-```xml
-
-<repositories>
-    <repository>
-        <id>org.depwatch</id>
-        <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-</repositories>
-
-```
-
-Next the put licence-check into your build process by adding the following to your pom.xml:
+Put licence-check into your build process by adding the following to your pom.xml:
 
 ```xml
 
@@ -60,7 +41,7 @@ Next the put licence-check into your build process by adding the following to yo
 
 When you do this, your builds will start failing if you include a dependency that depwatch doesn't recognize (or, worse, the dependency doesn't declare a license at all).
 
-**NOTE:** As of this writing (late at night on 2013-06-21), the artifact hasn't been pushed into Sonatype's Central Repository. I did everything I could to get it in there, but it takes a day or two. If you happen to be seeing this over the weekend, please be patient.
+**NOTE:** As of this writing (late at night on 2013-06-21), the artifact hasn't been pushed into Maven's Central Repository. I hope to have it published by Tuesday (2013-06-25). I did everything I could to get it in there over the weekend, but it takes a business day or two. If you happen to be seeing this over the weekend, please be patient.
 
 Is this it?
 ---------------
