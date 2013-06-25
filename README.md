@@ -32,7 +32,7 @@ This will install the plugin to your local .m2 repo, so it should work locally f
 <build>
   <plugins>
     <plugin>
-      <groupId>org.depwatch</groupId>
+      <groupId>org.complykit</groupId>
       <artifactId>license-check-maven-plugin</artifactId>
       <version>0.1-PREVIEW</version>
       <executions>
