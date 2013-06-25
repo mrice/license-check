@@ -1,4 +1,4 @@
-package org.depwatch.licensecheck.model;
+package org.complykit.licensecheck.model;
 
 public class Result {
 

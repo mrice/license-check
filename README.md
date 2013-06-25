@@ -7,6 +7,10 @@ What is it?
 --------------
 For now, license-check just checks to make sure that your Maven dependencies have a license declared in the Central Repo. It basically looks at each dependency and runs a query against the Central Repo to see if the dependency declares a license that [depwatch.org](http://depwatch.org) recognizes. If not, then your build will **fail**.
 
+Warning
+--------------
+If you are using the public version of this plugin, you should know that it will send a list of your dependencies to the server at complykit.org unencrypted (for now). ***This means that you probably shouldn't use this on a super-proprietary project without approval from your management and legal team.***
+
 Isn't there already something like this?
 ---------------
 **No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however, all it does is make sure that all the artifacts you've included in the project actually declare a license that depwatch recognizes as one of the [opensource.org](http://www.opensource.org/) registered licenses. 
@@ -15,7 +19,13 @@ This doesn't sound like much, but it's critically important. If the license isn'
 
 How to use it
 ---------------
-Put licence-check into your build process by adding the following to your pom.xml:
+For now, you'll need to install the plugin locally (everybody be cool: I'm going to put it in the public repo soon, I'm just waiting for Sonatype right now). Download the code, and cd into the license-check directory. Then type this:
+
+```basic
+mvn install
+```
+
+This will install the plugin to your local .m2 repo, so it should work locally for now. Obivously, this will create major problems if you want to put it into a continuous build tool like Jenkins or Travis, so you might want to create a profile in your pom. Next, put licence-check into your build process by adding the following to your pom.xml:
 
 ```xml
 
@@ -45,5 +55,5 @@ When you do this, your builds will start failing if you include a dependency wit
 
 Is this it?
 ---------------
-**Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [depwatch.org mailing list](http://depwatch.org). 
+**Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [depwatch.org mailing list](http://depwatch.org). For more about what's on deck, see my [backlog](https://github.com/mrice/license-check/backlog.md).
 

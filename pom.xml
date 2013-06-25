@@ -5,13 +5,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.depwatch</groupId>
+	<groupId>org.complykit</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.1-PREVIEW</version>
+	<version>0.2-PREVIEW</version>
 	<packaging>maven-plugin</packaging>
 	<name>License Check Plugin</name>
 	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
-	<url>http://depwatch.org</url>
+	<url>http://complykit.org</url>
 	<inceptionYear>2013</inceptionYear>
 
 	<scm>

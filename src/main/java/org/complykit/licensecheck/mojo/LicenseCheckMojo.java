@@ -1,4 +1,4 @@
-package org.depwatch.licensecheck.mojo;
+package org.complykit.licensecheck.mojo;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -16,7 +16,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.depwatch.licensecheck.model.Result;
+import org.complykit.licensecheck.model.Result;
 
 import com.google.gson.Gson;
 
@@ -48,7 +48,7 @@ public class LicenseCheckMojo extends AbstractMojo {
      * </configuration>
      * 
      */
-    @Parameter( property = "check.host", defaultValue = "http://depwatch.org/api/license-check/" )
+    @Parameter( property = "check.host", defaultValue = "http://complykit.org/api/license-check/" )
     private String host;
 
     /**
@@ -70,11 +70,12 @@ public class LicenseCheckMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         getLog().info("------------------------------------------------------------------------");
-        getLog().info("VALIDATING LICENSES");
+        getLog().info("VALIDATING LICENSES                                                     ");
         getLog().info("------------------------------------------------------------------------");
         if (offline) {
             getLog().info("currently offline, skipping this step");
         } else {
+            getLog().info("This plugin will validate that the artifacts you're using have a license file. When the plugin recognizes that an artifact is one of the Open Source Initiative (OSI) approved licenses, it will give you the URL for the license. This plugin and its author are not associated with the OSI.");
             Set artifacts = project.getDependencyArtifacts();
             getLog().info("Found "+artifacts.size()+" artifacts");
             Iterator it=artifacts.iterator();
