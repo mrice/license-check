@@ -53,6 +53,21 @@ When you do this, your builds will start failing if you include a dependency wit
 
 **NOTE:** As of this writing (late at night on 2013-06-21), the artifact hasn't been pushed into Maven's Central Repository. I hope to have it published by Tuesday (2013-06-25). I did everything I could to get it in there over the weekend, but it takes a business day or two. If you happen to be seeing this over the weekend, please be patient.
 
+Options
+---------------
+**To exclude artifacts:** Add the following configuration setting to the plugin:
+
+```xml
+  <configuration>
+    <host>http://localhost:8081/validate-0.2-PREVIEW.php?id=</host>
+    <excludes>
+      <param>junit:junit:4.11</param>
+    </excludes>
+  </configuration>
+```
+
+To add more than just one artifact, just add multiple param elements.
+
 Is this it?
 ---------------
 **Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [depwatch.org mailing list](http://depwatch.org). For more about what's on deck, see my [backlog](https://github.com/mrice/license-check/backlog.md).

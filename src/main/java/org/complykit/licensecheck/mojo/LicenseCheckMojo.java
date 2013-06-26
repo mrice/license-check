@@ -60,6 +60,11 @@ public class LicenseCheckMojo extends AbstractMojo {
     @Component
     private MavenProject project = null;
 
+    /**
+     * This is part of the Maven settings file, and it should let developers proceed with
+     * build even if Maven is being run in some kind of protected server environment.
+     * 
+     */
     @Parameter( defaultValue = "${settings.offline}" )
     private boolean offline;
 
@@ -75,17 +80,16 @@ public class LicenseCheckMojo extends AbstractMojo {
     private String host;
 
     /**
-     * Because this is very much preview, the point of this is to give me a way to notify
-     * you when your library is available on the server.
-     * 
+     * A list of artifacts that should be excluded from consideration. Example:
      * <configuration>
-     *     <notificationEmail>me@michaelrice.com</notificationEmail>
+     *      <excludes>
+     *          <param>full:artifact:coords</param>
+     *      </excludes>
      * </configuration>
-     * 
      */
-    @Parameter( property = "check.notificationEmail" )
-    private String notificationEmail;
-
+    @Parameter( property = "check.excludes" )
+    private String[] excludes;
+    
     /**
      * This is the primary entry point into the Maven plugin.
      */
@@ -93,25 +97,57 @@ public class LicenseCheckMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         getLog().info("------------------------------------------------------------------------");
-        getLog().info("VALIDATING LICENSES                                                     ");
+        getLog().info("VALIDATING OPEN SOURCE LICENSES                                         ");
         getLog().info("------------------------------------------------------------------------");
+        getLog().info("This plugin will validate that the artifacts you're using have a"); 
+        getLog().info("license file. When the plugin recognizes that an artifact is one"); 
+        getLog().info("of the Open Source Initiative (OSI) approved licenses, it will"); 
+        getLog().info("give you the URL for the license. ");
+        getLog().info("");
+        getLog().info("WARNING: all artifact coordinates are sent over the wire (unencrypted).");
+        getLog().info("");
+        getLog().info("This plugin and its author are not associated with the OSI.");
+        getLog().info("Please send me feedback: me@michaelrice.com. Thanks!");
+
         if (offline) {
-            getLog().info("currently offline, skipping this step");
+            getLog().info("currently offline, skipping license validation");
         } else {
-            getLog().info("This plugin will validate that the artifacts you're using have a license file. When the plugin recognizes that an artifact is one of the Open Source Initiative (OSI) approved licenses, it will give you the URL for the license. This plugin and its author are not associated with the OSI.");
+
             Set artifacts = project.getDependencyArtifacts();
-            getLog().info("Found "+artifacts.size()+" artifacts");
+            getLog().info("Validating licenses for "+artifacts.size()+" artifact(s)");
             Iterator it=artifacts.iterator();
             while (it.hasNext()) {
                 Artifact artifact = (Artifact)it.next();
                 String artifactKey = artifact.getGroupId()+":"+artifact.getArtifactId()+":"+artifact.getBaseVersion();
-                getLog().info(artifactKey + "...");
-                if (!runOnlineArtifactCheck(artifactKey)) {
-                    throw new MojoFailureException("could not validate license for artifact "+artifactKey);
+                if (!artifactIsOnExcludeList(artifactKey)) {
+                    if (!runOnlineArtifactCheck(artifactKey)) {
+                        throw new MojoFailureException("could not validate license for artifact "+artifactKey);
+                    }
+                } else {
+                    getLog().info(artifactKey+" is on exclude list, skipped");
                 }
             }
-        }
 
+        }
+        getLog().info("License validation complete");
+
+    }
+
+    /**
+     * Just do a quick walk through of the excluded list and return true if match.
+     * 
+     * @param artifactKey the coordinates
+     * @return true if it's on the exclude list, false if not or no exclude list was defined
+     */
+    private boolean artifactIsOnExcludeList(String artifactKey) {
+        if (excludes!=null) {
+            //walking the array should be easy since there shouldn't be more than a handful on here
+            for (int i=0;i<excludes.length;i++) {
+                if(artifactKey.toLowerCase().equals(excludes[i].toLowerCase()))
+                    return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -125,29 +161,29 @@ public class LicenseCheckMojo extends AbstractMojo {
 
         boolean result = false;
         HttpClient client = new DefaultHttpClient();
+        String msg = dependencyCoordinate+" ";
         try {
 
             String url = host+dependencyCoordinate;
-            if (notificationEmail!=null) {
-                url += "?notify="+notificationEmail;
-            }
+
             HttpGet get = new HttpGet(url);
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
             String responseBody = client.execute(get, responseHandler);
-
             Result serverResult = gson.fromJson(responseBody, Result.class);
+
             if ("ok".equals(serverResult.getLicensedDeclared())) {
-                result = true;
-                String msg = "..."+serverResult.getLicensedDeclared()+": "+serverResult.getLicense();
+                msg += "license="+serverResult.getLicense();
+                if (serverResult.getLicenseTitle()!=null && serverResult.getLicenseTitle().length()>0)
+                    msg+= " ("+serverResult.getLicenseTitle()+")";
+                if (serverResult.getOsiLink()!=null && serverResult.getOsiLink().length()>0)
+                    msg+= " "+serverResult.getOsiLink();
                 getLog().info(msg);
+                result = true;
             } else {
-                result = false;
-                String msg = "..."+serverResult.getLicensedDeclared()+": ";
                 if (serverResult.getLicense()==null||serverResult.getLicense().length()==0)
-                    msg+=": NO LICENSE FOUND";
-                else
-                    msg+=": "+serverResult.getLicense();
+                    msg+=" NO OS LICENSE FOUND";
                 getLog().error(msg);
+                result = false;
             }
 
         } catch (Exception e) {

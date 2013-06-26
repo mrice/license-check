@@ -27,6 +27,8 @@ public class Result {
 
     private String licenseDeclared;
     private String license;
+    private String licenseTitle;
+    private String osiLink;
 
     public String getLicensedDeclared() {
         return licenseDeclared;
@@ -42,5 +44,18 @@ public class Result {
         this.license = license;
     }
 
+    public String getLicenseTitle() {
+        return licenseTitle;
+    }
+    public void setLicenseTitle(String licenseTitle) {
+        this.licenseTitle = licenseTitle;
+    }
+
+    public String getOsiLink() {
+        return osiLink;
+    }
+    public void setOsiLink(String osiLink) {
+        this.osiLink = osiLink;
+    }
 
 }
