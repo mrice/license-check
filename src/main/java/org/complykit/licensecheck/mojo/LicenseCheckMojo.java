@@ -69,7 +69,8 @@ public class LicenseCheckMojo extends AbstractMojo {
     private boolean offline;
 
     /**
-     * The validation server, to override, include the following configuration:
+     * The validation server, to override, include the following configuration.
+     * Make sure that you include a trailing slash (restful format) or an equals sign (query string).
      * 
      * <configuration>
      *     <host>http://localhost:8081/validate.php?id=</host>
@@ -89,13 +90,27 @@ public class LicenseCheckMojo extends AbstractMojo {
      */
     @Parameter( property = "check.excludes" )
     private String[] excludes;
-    
+
+    /**
+     * A list of blacklisted licenses. Example:
+     * <configuration>
+     *      <blacklist>
+     *          <param>agpl-3.0</param>
+     *          <param>gpl-2.0</param>
+     *          <param>gpl-3.0</param>
+     *      </blacklist>
+     * </configuration>
+     */
+    @Parameter( property = "check.blacklist" )
+    private String[] blacklist;
+
     /**
      * This is the primary entry point into the Maven plugin.
      */
     @SuppressWarnings("rawtypes")
     public void execute() throws MojoExecutionException, MojoFailureException {
 
+        long startTime = System.currentTimeMillis();
         getLog().info("------------------------------------------------------------------------");
         getLog().info("VALIDATING OPEN SOURCE LICENSES                                         ");
         getLog().info("------------------------------------------------------------------------");
@@ -110,7 +125,7 @@ public class LicenseCheckMojo extends AbstractMojo {
         getLog().info("Please send me feedback: me@michaelrice.com. Thanks!");
 
         if (offline) {
-            getLog().info("currently offline, skipping license validation");
+            getLog().info("*** Currently offline, skipping license validation ***");
         } else {
 
             Set artifacts = project.getDependencyArtifacts();
@@ -120,7 +135,7 @@ public class LicenseCheckMojo extends AbstractMojo {
                 Artifact artifact = (Artifact)it.next();
                 String artifactKey = artifact.getGroupId()+":"+artifact.getArtifactId()+":"+artifact.getBaseVersion();
                 if (!artifactIsOnExcludeList(artifactKey)) {
-                    if (!runOnlineArtifactCheck(artifactKey)) {
+                    if (!checkArtifact(artifactKey)) {
                         throw new MojoFailureException("could not validate license for artifact "+artifactKey);
                     }
                 } else {
@@ -129,7 +144,8 @@ public class LicenseCheckMojo extends AbstractMojo {
             }
 
         }
-        getLog().info("License validation complete");
+
+        getLog().info("License validation complete (took "+(System.currentTimeMillis()-startTime)+"ms)");
 
     }
 
@@ -151,20 +167,39 @@ public class LicenseCheckMojo extends AbstractMojo {
     }
 
     /**
+     * Compare the license code to the user-provided black list
+     * @param licenseCode the standardized code from complykit
+     * @return true if the code is on the user-provided black list
+     */
+    private boolean licenseIsOnBlacklist(String licenseCode) {
+        if (blacklist!=null) {
+            //walking through the array should be small and fast for now
+            for (int i=0; i<blacklist.length; i++) {
+                if (licenseCode.toLowerCase().equals(blacklist[i].toLowerCase())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * This method actually runs the artifact's coordinates against a validation server.
      * Right now, all the logic is buried into this big function.
      * 
-     * @param dependencyCoordinate
-     * @return
+     * @param dependencyCoordinates
+     * @return true if the artifact passes the checks.
      */
-    public boolean runOnlineArtifactCheck(String dependencyCoordinate) {
+    //TODO as of version 0.4, this function is getting too monolithic
+    public boolean checkArtifact(String dependencyCoordinates) {
 
         boolean result = false;
         HttpClient client = new DefaultHttpClient();
-        String msg = dependencyCoordinate+" ";
+        String msg = dependencyCoordinates+" ";
         try {
 
-            String url = host+dependencyCoordinate;
+            //Note that this assumes the host ends with = or /
+            String url = host+dependencyCoordinates;
 
             HttpGet get = new HttpGet(url);
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
@@ -173,12 +208,17 @@ public class LicenseCheckMojo extends AbstractMojo {
 
             if ("ok".equals(serverResult.getLicensedDeclared())) {
                 msg += "license="+serverResult.getLicense();
-                if (serverResult.getLicenseTitle()!=null && serverResult.getLicenseTitle().length()>0)
-                    msg+= " ("+serverResult.getLicenseTitle()+")";
-                if (serverResult.getOsiLink()!=null && serverResult.getOsiLink().length()>0)
-                    msg+= " "+serverResult.getOsiLink();
+                if (!licenseIsOnBlacklist(serverResult.getLicense())) {
+                    if (serverResult.getLicenseTitle()!=null && serverResult.getLicenseTitle().length()>0)
+                        msg+= " ("+serverResult.getLicenseTitle()+")";
+                    if (serverResult.getOsiLink()!=null && serverResult.getOsiLink().length()>0)
+                        msg+= " "+serverResult.getOsiLink();
+                    result = true;
+                } else {
+                    msg+=" IS ON THE BLACKLIST, failing build";
+                    result = false;
+                }
                 getLog().info(msg);
-                result = true;
             } else {
                 if (serverResult.getLicense()==null||serverResult.getLicense().length()==0)
                     msg+=" NO OS LICENSE FOUND";

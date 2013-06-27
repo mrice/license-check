@@ -14,7 +14,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 
 	<groupId>org.complykit</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.3</version>
+	<version>0.4</version>
 	<packaging>maven-plugin</packaging>
 	<name>License Check Plugin</name>
 	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
@@ -133,5 +133,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 			</plugins>
 		</pluginManagement>
 	</build>
-
+	<!-- this is temporary: -->
+	<distributionManagement>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Nexus Staging Repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 </project>

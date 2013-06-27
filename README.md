@@ -3,29 +3,29 @@ license-check
 
 [![Build Status](https://travis-ci.org/mrice/license-check.png)](https://travis-ci.org/mrice/license-check)
 
+Current version: 0.4 (June 26, 2013)
+
 What is it?
 --------------
-For now, license-check just checks to make sure that your Maven dependencies have a license declared in the Central Repo. It basically looks at each dependency and runs a query against the Central Repo to see if the dependency declares a license that [depwatch.org](http://depwatch.org) recognizes. If not, then your build will **fail**.
+For now, **license-check** just checks to make sure that your Maven dependencies have a license declared in the [Maven Central Repository](http://search.maven.org) and that you aren't including a license on your project's blacklist. There's more on the horizon, but this is an early release. 
+
+How it works
+--------------
+License-check looks at each dependency and runs a query against the Central Repo to see if the dependency declares a license that [complykit.org](http://complykit.org) recognizes. If not, then your build will **fail**. (Don't worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
 
 Warning
 --------------
-If you are using the public version of this plugin, you should know that it will send a list of your dependencies to the server at complykit.org unencrypted (for now). ***This means that you probably shouldn't use this on a super-proprietary project without approval from your management and legal team.***
+If you are using the public version of this plugin, you should know that it will send a list of your dependencies to the server at complykit.org unencrypted (for now). ***This means that you probably shouldn't use this on a super-proprietary project without approval from your management and legal teams.***
 
 Isn't there already something like this?
 ---------------
-**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however, all it does is make sure that all the artifacts you've included in the project actually declare a license that depwatch recognizes as one of the [opensource.org](http://www.opensource.org/) registered licenses. 
+**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however, it makes sure that all the artifacts you've included in the project actually declare a license that [complykit.org](http://complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/) registered licenses. 
 
 This doesn't sound like much, but it's critically important. If the license isn't recognized or isn't declared at all, it's very possible that the authors or contributors could claim fully copyright in the library and expose you to a lot of liability. 
 
 How to use it
 ---------------
-For now, you'll need to install the plugin locally (everybody be cool: I'm going to put it in the public repo soon, I'm just waiting for Sonatype right now). Download the code, and cd into the license-check directory. Then type this:
-
-```basic
-mvn install
-```
-
-This will install the plugin to your local .m2 repo, so it should work locally for now. Obivously, this will create major problems if you want to put it into a continuous build tool like Jenkins or Travis, so you might want to create a profile in your pom. Next, put licence-check into your build process by adding the following to your pom.xml:
+Put licence-check into your build process by adding the following to your pom.xml:
 
 ```xml
 
@@ -34,7 +34,7 @@ This will install the plugin to your local .m2 repo, so it should work locally f
     <plugin>
       <groupId>org.complykit</groupId>
       <artifactId>license-check-maven-plugin</artifactId>
-      <version>0.1-PREVIEW</version>
+      <version>0.4</version>
       <executions>
         <execution>
           <phase>verify</phase>
@@ -51,24 +51,48 @@ This will install the plugin to your local .m2 repo, so it should work locally f
 
 When you do this, your builds will start failing if you include a dependency with a license that depwatch doesn't recognize (or, worse, the dependency doesn't declare a license at all).
 
-**NOTE:** As of this writing (late at night on 2013-06-21), the artifact hasn't been pushed into Maven's Central Repository. I hope to have it published by Tuesday (2013-06-25). I did everything I could to get it in there over the weekend, but it takes a business day or two. If you happen to be seeing this over the weekend, please be patient.
+Note: Version 0.4 was released late in the evening on Wednesday, June 26; check back in a few hours if you just saw this.
 
-Options
+Configuration options
 ---------------
+**Create a blacklist of licenses:** Right or wrong, many organizations and their legal teams have declared certain licenses to be incompatible with their own licenseing goals. Detecting those licenses and failing your build when you accidentally include one is one of the principal goals of this project. For now, you'll need to add licenses to your blacklist manually. Add a configuration setting to your plugin such as the following:
+
+```xml
+  <plugin>
+    ...
+    <configuration>
+      <blacklist>
+        <param>agpl-3.0</param> <!--exclude affero-->
+        <param>gpl-2.0</param> <!--exclude gpl 2-->
+        <param>gpl-3.0</param> <!--exclude gpl 3-->
+      </blacklist>
+    </configuration>
+  </plugin>
+```
+
+Note that you need to enter the exact license code that complykit.org uses. Until I can get that documented, refer to the short codes used by the (Open Source Initiative)[http://opensource.org]--those are the basis of the codes I'm using.
+
 **To exclude artifacts:** Add the following configuration setting to the plugin:
 
 ```xml
-  <configuration>
-    <host>http://localhost:8081/validate-0.2-PREVIEW.php?id=</host>
-    <excludes>
-      <param>junit:junit:4.11</param>
-    </excludes>
-  </configuration>
+  <plugin>
+    ...
+    <configuration>
+      <excludes>
+        <param>com.bigco.webapp:internal-common-library:1.0.23</param>
+      </excludes>
+    </configuration>
+  </plugin>
 ```
 
-To add more than just one artifact, just add multiple param elements.
+Notice you need to add all three coordinates to the artifact. They should be familiar, and the correspond to the groupId, artifactId, and version that are the common elements of most poms. To add more than just one artifact to your exclude list, just add multiple param elements.
+
 
 Is this it?
 ---------------
-**Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [depwatch.org mailing list](http://depwatch.org). For more about what's on deck, see my [backlog](https://github.com/mrice/license-check/backlog.md).
+**Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [complykit.org mailing list](http://complykit.org). For more about what's on deck, see my [backlog](https://github.com/mrice/license-check/backlog.md).
 
+
+Trust me, I'm a lawyer.
+---------------
+I hope you'll contact me with any questions or issues (or use the github issue tracker). I **desperately** hope you'll give me some feedback, good or bad. And yes, I really am a lawyer (licensed in Washington State and probably California very soon). Obvious disclaimer: the purpose of this tool is not to give you legal advice, duh.
