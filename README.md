@@ -25,7 +25,7 @@ This doesn't sound like much, but it's critically important. If the license isn'
 
 How to use it
 ---------------
-Put licence-check into your build process by adding the following to your pom.xml:
+Put license-check into your build process by adding the following to your pom.xml:
 
 ```xml
 
@@ -50,8 +50,6 @@ Put licence-check into your build process by adding the following to your pom.xm
 ```
 
 When you do this, your builds will start failing if you include a dependency with a license that depwatch doesn't recognize (or, worse, the dependency doesn't declare a license at all).
-
-Note: Version 0.4 was released late in the evening on Wednesday, June 26; check back in a few hours if you just saw this.
 
 Configuration options
 ---------------
