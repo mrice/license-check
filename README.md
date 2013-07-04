@@ -3,19 +3,15 @@ license-check
 
 [![Build Status](https://travis-ci.org/mrice/license-check.png)](https://travis-ci.org/mrice/license-check)
 
-Current version: 0.4 (June 26, 2013)
+Current version: 0.5 (July 3, 2013)
 
 What is it?
 --------------
-For now, **license-check** just checks to make sure that your Maven dependencies have a license declared in the [Maven Central Repository](http://search.maven.org) and that you aren't including a license on your project's blacklist. There's more on the horizon, but this is an early release. 
+For now, **license-check** just checks to make sure that your Maven dependencies have a license declared in their POM files and that you aren't including a license on your project's blacklist. There's more on the horizon but this is an early release. 
 
 How it works
 --------------
-License-check looks at each dependency and runs a query against the Central Repo to see if the dependency declares a license that [complykit.org](http://complykit.org) recognizes. If not, then your build will **fail**. (Don't worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
-
-Warning
---------------
-If you are using the public version of this plugin, you should know that it will send a list of your dependencies to the server at complykit.org unencrypted (for now). ***This means that you probably shouldn't use this on a super-proprietary project without approval from your management and legal teams.***
+License-check looks at each dependency and runs a query against your Maven respository to see if the dependency declares a license that [complykit.org](http://complykit.org) recognizes. If not, then your build will **fail**. (Don't worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
 
 Isn't there already something like this?
 ---------------
@@ -34,12 +30,12 @@ Put license-check into your build process by adding the following to your pom.xm
     <plugin>
       <groupId>org.complykit</groupId>
       <artifactId>license-check-maven-plugin</artifactId>
-      <version>0.4</version>
+      <version>0.5</version>
       <executions>
         <execution>
           <phase>verify</phase>
           <goals>
-            <goal>check</goal>
+            <goal>os-check</goal>
           </goals>
         </execution>
       </executions>
@@ -88,9 +84,9 @@ Notice you need to add all three coordinates to the artifact. They should be fam
 
 Is this it?
 ---------------
-**Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [complykit.org mailing list](http://complykit.org). For more about what's on deck, see my [backlog](https://github.com/mrice/license-check/backlog.md).
+**Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [complykit.org mailing list](http://complykit.org). For more about what's on deck, see my [backlog](https://github.com/mrice/license-check/wiki/Backlog).
 
 
 Trust me, I'm a lawyer.
 ---------------
-I hope you'll contact me with any questions or issues (or use the github issue tracker). I **desperately** hope you'll give me some feedback, good or bad. And yes, I really am a lawyer (licensed in Washington State and probably California very soon). Obvious disclaimer: the purpose of this tool is not to give you legal advice, duh.
+I hope you'll contact me with any questions or issues (or use the github issue tracker). I really (really!) hope you'll give me some feedback, good or bad. And yes, I really am a lawyer (licensed in Washington State and probably California very soon). Obvious disclaimer: the purpose of this tool is not to give you legal advice, duh.
