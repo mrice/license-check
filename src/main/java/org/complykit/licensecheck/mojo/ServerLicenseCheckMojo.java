@@ -53,7 +53,7 @@ import com.google.gson.Gson;
  *
  */
 @Mojo(name="check")
-public class LicenseCheckMojo extends AbstractMojo {
+public class ServerLicenseCheckMojo extends AbstractMojo {
 
     private Gson gson = new Gson();
 
