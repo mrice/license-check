@@ -3,7 +3,7 @@ license-check
 
 [![Build Status](https://travis-ci.org/mrice/license-check.png)](https://travis-ci.org/mrice/license-check)
 
-Current version: 0.5.1 (July 6, 2013)
+Current version: 0.5.1 (July 5, 2013)
 
 What is it?
 --------------
