@@ -3,7 +3,7 @@ license-check
 
 [![Build Status](https://travis-ci.org/mrice/license-check.png)](https://travis-ci.org/mrice/license-check)
 
-Current version: 0.5 (July 3, 2013)
+Current version: 0.5.1 (July 6, 2013)
 
 What is it?
 --------------
@@ -30,7 +30,7 @@ Put license-check into your build process by adding the following to your pom.xm
     <plugin>
       <groupId>org.complykit</groupId>
       <artifactId>license-check-maven-plugin</artifactId>
-      <version>0.5</version>
+      <version>0.5.1</version>
       <executions>
         <execution>
           <phase>verify</phase>
