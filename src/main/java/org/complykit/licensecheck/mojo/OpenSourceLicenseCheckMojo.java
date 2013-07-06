@@ -224,21 +224,22 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 		// first, look for a license
 		String licenseName = extractLicenseName(pom);
 		if (licenseName==null) {
-			//TODO: extract the artifact coordinates
 			String parentArtifactCoords = extractParentCoords(pom);
-			
-			//search for the artifact
-			Artifact parent = retrieveArtifact(parentArtifactCoords);
-			
-			//check the recursion depth
-			if (currentDepth>=maxSearchDepth)
-				return null; //TODO throw an exception
-			
-			licenseName = recurseForLicenseName(parent, currentDepth+1);
+			if (parentArtifactCoords != null) { 
+				//search for the artifact
+				Artifact parent = retrieveArtifact(parentArtifactCoords);
+				if (parent != null) {
+					//check the recursion depth
+					if (currentDepth>=maxSearchDepth)
+						return null; //TODO throw an exception
+					licenseName = recurseForLicenseName(parent, currentDepth+1);
+				} else {
+					return null;
+				}
+			} else {
+				return null;
+			}
 		}
-
-		// if not found, then let's search the parent (but check to make sure we didn't hit the max recursion depth)
-
 		return licenseName;
 	}
 
@@ -326,9 +327,12 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 		try {
 			result = repoSystem.resolveArtifact(repoSession, request);
 		} catch (ArtifactResolutionException e) {
-			//TODO: figure out how to deal with this one
+			getLog().error("Could not resolve parent artifact ("+coordinates+"): "+e.getMessage());
 		}
-		return result.getArtifact();
+		if (result!=null)
+			return result.getArtifact();
+		else
+			return null;
 	}
 	
 	/**
@@ -338,6 +342,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 	 * @return
 	 */
 	private String convertLicenseNameToCode(String licenseName) {
+		if (licenseName == null)
+			return null;
 		if (descriptors == null) {
 			loadDescriptors();
 		}

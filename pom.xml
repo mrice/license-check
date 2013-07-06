@@ -14,7 +14,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 
 	<groupId>org.complykit</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.5</version>
+	<version>0.5.1</version>
 	<packaging>maven-plugin</packaging>
 	<name>License Check Plugin</name>
 	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
