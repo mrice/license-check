@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -14,24 +14,31 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 
 	<groupId>org.complykit</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.5.1</version>
+	<version>0.5.3</version> <!-- jumped to 0.5.3 just to be safe -->
 	<packaging>maven-plugin</packaging>
 	<name>License Check Plugin</name>
 	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
-	<url>http://complykit.org</url>
+	<url>http://michaelrice.com</url>
 	<inceptionYear>2013</inceptionYear>
 
 	<scm>
 		<url>https://github.com/mrice/license-check</url>
 		<connection>scm:git:git@github.com:mrice/license-check.git</connection>
 	</scm>
+
+	<organization>
+		<name>Complykit</name>
+		<url>http://complykit.org/</url>
+	</organization>
+
 	<licenses>
 		<license>
 			<name>MIT license</name>
 			<url>http://www.opensource.org/licenses/mit-license.php</url>
 		</license>
 	</licenses>
-	<developers>
+
+    <developers>
 		<developer>
 			<name>Michael Rice</name>
 			<email>me@michaelrice.com</email>
@@ -43,7 +50,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	</developers>
 
 	<properties>
-		<mavenVersion>2.2.1</mavenVersion>
+		<!-- <mavenVersion>2.2.1</mavenVersion>  -->
+		<mavenVersion>3.0</mavenVersion>
 		<pluginPluginVersion>3.2</pluginPluginVersion>
 	</properties>
 
@@ -51,15 +59,15 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 		<!-- plugin requirements -->
 		<dependency>
 			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-project</artifactId>
-			<version>${mavenVersion}</version><!-- TODO: is this the right version? shouldn't I be on 3.0? -->
+			<artifactId>maven-core</artifactId> <!-- TODO: maven-project is now maven-core? -->
+			<version>${mavenVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-model</artifactId>
 			<version>${mavenVersion}</version>
 		</dependency>
-		<dependency><!-- TODO: is this still required? -->
+		<dependency><!-- TODO: is this dependency still required? -->
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
 			<version>${pluginPluginVersion}</version>
@@ -94,6 +102,19 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 			<groupId>org.sonatype.aether</groupId>
 			<artifactId>aether-util</artifactId>
 			<version>1.8</version>
+		</dependency>
+		
+		<!-- general and test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
 		</dependency>
 	</dependencies>
 
@@ -144,7 +165,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 			</plugins>
 		</pluginManagement>
 	</build>
-	<!-- this is temporary: -->
+
+	<!-- TODO this is temporary: -->
 	<distributionManagement>
 		<repository>
 			<id>sonatype-nexus-staging</id>
@@ -152,4 +174,5 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+
 </project>

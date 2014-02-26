@@ -25,37 +25,43 @@ package org.complykit.licensecheck.model;
 
 public class Result {
 
-    private String licenseDeclared;
-    private String license;
-    private String licenseTitle;
-    private String osiLink;
+    private final String licenseDeclared;
+    private final String license;
+    private final String licenseTitle;
+    private final String osiLink;
+
+    private Result() {
+        this.licenseDeclared = null;
+        this.license = null;
+        this.licenseTitle = null;
+        this.osiLink = null;
+    }
+
+    private Result(String licenseDeclared, String license, String licenseTitle, String osiLink) {
+        this.licenseDeclared = licenseDeclared;
+        this.license = license;
+        this.licenseTitle = licenseTitle;
+        this.osiLink = osiLink;
+    }
+
+    public static Result makeResult(String licenseDeclared, String license, String licenseTitle, String osiLink) {
+        return new Result(licenseDeclared, license, licenseTitle, osiLink);
+    }
 
     public String getLicensedDeclared() {
         return licenseDeclared;
-    }
-    public void setLicenseDeclared(String licenseDeclared) {
-        this.licenseDeclared = licenseDeclared;
     }
 
     public String getLicense() {
         return license;
     }
-    public void setLicense(String license) {
-        this.license = license;
-    }
 
     public String getLicenseTitle() {
         return licenseTitle;
     }
-    public void setLicenseTitle(String licenseTitle) {
-        this.licenseTitle = licenseTitle;
-    }
 
     public String getOsiLink() {
         return osiLink;
-    }
-    public void setOsiLink(String osiLink) {
-        this.osiLink = osiLink;
     }
 
 }

@@ -1,29 +1,37 @@
 package org.complykit.licensecheck.model;
 
 public class LicenseDescriptor {
-	private String code;
-	private String licenseName;
-	private String regex;
-	
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-	
-	public String getLicenseName() {
-		return licenseName;
-	}
-	public void setLicenseName(String licenseName) {
-		this.licenseName = licenseName;
-	}
-	
-	public String getRegex() {
-		return regex;
-	}
-	public void setRegex(String regex) {
-		this.regex = regex;
-	}
-	
+
+    private final String code;
+    private final String licenseName;
+    private final String regex;
+
+    private LicenseDescriptor() {
+        this.code = null;
+        this.licenseName = null;
+        this.regex = null;
+    }
+
+    private LicenseDescriptor(String code, String licenseName, String regex) {
+        this.code = code;
+        this.licenseName = licenseName;
+        this.regex = regex;
+    }
+
+    public static LicenseDescriptor makeDescriptor(String code, String licenseName, String regex) {
+        return new LicenseDescriptor(code, licenseName, regex);
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getLicenseName() {
+        return licenseName;
+    }
+
+    public String getRegex() {
+        return regex;
+    }
+
 }
