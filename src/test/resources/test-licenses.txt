@@ -1,0 +1,1 @@
+afl-3.0	afl-3.0	Academic Free License 3.0	(?=.*academic)(?=.*free)(?=.*3)		http://opensource.org/licenses/AFL-3.0

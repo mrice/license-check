@@ -1,7 +1,8 @@
-package org.complykit.licensecheck.model;
+package org.complykit.licensecheck.mojo;
 
 import static org.junit.Assert.*;
 
+import org.complykit.licensecheck.mojo.LicenseDescriptor;
 import org.junit.Test;
 
 /**
