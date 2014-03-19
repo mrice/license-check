@@ -1,0 +1,21 @@
+releases notes
+==============
+
+0.3 (June 25, 2013)
+--------------------------------
+* support for all OSI licenses
+* major improvements to license detection on the server
+* slightly better UI on console
+* added an exclude property
+* removed the notification email support since that didn't work anyway
+* deployed to maven central repository
+
+0.2-PREVIEW (June 24, 2013) 
+--------------------------------
+* changed to new server
+* added MIT license
+
+0.1-PREVIEW (June 21, 2013)
+--------------------------------
+* support for two OS licenses
+* very simple query from license name to server

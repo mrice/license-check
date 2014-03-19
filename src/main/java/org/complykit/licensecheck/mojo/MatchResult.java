@@ -21,41 +21,31 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package org.complykit.licensecheck.model;
+package org.complykit.licensecheck.mojo;
 
-public class Result {
+/**
+ * @author mrice
+ */
+class MatchResult {
 
-    private String licenseDeclared;
-    private String license;
-    private String licenseTitle;
-    private String osiLink;
+    private final boolean matched;
+    private final LicenseDescriptor licenseDescriptor;
 
-    public String getLicensedDeclared() {
-        return licenseDeclared;
-    }
-    public void setLicenseDeclared(String licenseDeclared) {
-        this.licenseDeclared = licenseDeclared;
-    }
-
-    public String getLicense() {
-        return license;
-    }
-    public void setLicense(String license) {
-        this.license = license;
+    private MatchResult(final boolean matched, final LicenseDescriptor licenseDescriptor) {
+        this.matched = matched;
+        this.licenseDescriptor = licenseDescriptor;
     }
 
-    public String getLicenseTitle() {
-        return licenseTitle;
-    }
-    public void setLicenseTitle(String licenseTitle) {
-        this.licenseTitle = licenseTitle;
+    public static MatchResult makeResult(final boolean matched, final LicenseDescriptor licenseDescriptor) {
+        return new MatchResult(matched, licenseDescriptor);
     }
 
-    public String getOsiLink() {
-        return osiLink;
+    public boolean isMatched() {
+        return matched;
     }
-    public void setOsiLink(String osiLink) {
-        this.osiLink = osiLink;
+
+    public LicenseDescriptor getLicenseDescriptor() {
+        return licenseDescriptor;
     }
 
 }

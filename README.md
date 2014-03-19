@@ -3,21 +3,23 @@ license-check
 
 [![Build Status](https://travis-ci.org/mrice/license-check.png)](https://travis-ci.org/mrice/license-check)
 
-Current version: 0.5.1 (July 5, 2013)
+Current version: 0.5.3 (**TBD**)
 
 What is it?
 --------------
 For now, **license-check** just checks to make sure that your Maven dependencies have a license declared in their POM files and that you aren't including a license on your project's blacklist. There's more on the horizon but this is an early release. 
 
-How it works
+How does it work?
 --------------
-License-check looks at each dependency and runs a query against your Maven respository to see if the dependency declares a license that [complykit.org](http://complykit.org) recognizes. If not, then your build will **fail**. (Don't worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
+License-check looks at each dependency and runs a query against your Maven respository to see if the dependency declares a license the plugin can recognize using a local, stored collection of regular expressions of common licenses. 
+
+If the plugin cannot find a match, then your build will **fail**. (Don't worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
 
 Isn't there already something like this?
 ---------------
-**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however, it makes sure that all the artifacts you've included in the project actually declare a license that [complykit.org](http://complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/) registered licenses. 
+**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is  to help you make sure you're not including licenses without realizing what you're doing. It does this by making sure that all the artifacts you've included in the project actually declare a license that [complykit.org](http://complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/) registered licenses. 
 
-This doesn't sound like much, but it's critically important. If the license isn't recognized or isn't declared at all, it's very possible that the authors or contributors could claim fully copyright in the library and expose you to a lot of liability. 
+This doesn't sound like much, but **it's critically important**. If the license isn't recognized or isn't declared at all, it's very possible that the authors or contributors could claim full copyright in the library and expose you to a lot of liability (* that's not legal advice, that's just reality). 
 
 How to use it
 ---------------
@@ -30,7 +32,7 @@ Put license-check into your build process by adding the following to your pom.xm
     <plugin>
       <groupId>org.complykit</groupId>
       <artifactId>license-check-maven-plugin</artifactId>
-      <version>0.5.1</version>
+      <version>0.5.3</version>
       <executions>
         <execution>
           <phase>verify</phase>
@@ -45,7 +47,7 @@ Put license-check into your build process by adding the following to your pom.xm
 
 ```
 
-When you do this, your builds will start failing if you include a dependency with a license that depwatch doesn't recognize (or, worse, the dependency doesn't declare a license at all).
+As mentioned, when you do this, your mvn install builds will start failing if you include a dependency with a license that the plugin doesn't recognize (or, worse, the dependency doesn't declare a license at all).
 
 Configuration options
 ---------------
@@ -89,4 +91,4 @@ Is this it?
 
 Trust me, I'm a lawyer.
 ---------------
-I hope you'll contact me with any questions or issues (or use the github issue tracker). I really (really!) hope you'll give me some feedback, good or bad. And yes, I really am a lawyer (licensed in Washington State and probably California very soon). Obvious disclaimer: the purpose of this tool is not to give you legal advice, duh.
+I hope you'll contact me with any questions or issues (or use the github issue tracker). I really (really!) hope you'll give me some feedback, good or bad. And yes, I really am a lawyer (licensed in Washington State and California). Obvious disclaimer: the purpose of this tool is not to give you legal advice, duh. (Oh, in case someone clones the original repository, this message is only from [Michael Rice](http://michaelrice.com).)
