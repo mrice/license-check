@@ -161,16 +161,16 @@ public class LicenseCheckMojo extends AbstractMojo {
                         String licenseShortCode = convertLicenseNameToCode(licenseName);
                         if (licenseShortCode == null) {
                             failBuild = true;
-                            buildMessage = licenseShortCode + ": not found ("+coordinates+")";
+                            buildMessage = "license not understood by license-check (pom declared '"+licenseName+"')";
                         } else if (licenseIsOnBlacklist(licenseShortCode)) {
                             failBuild = true;
-                            buildMessage = licenseShortCode + ": BLACKLISTED";
+                            buildMessage = licenseShortCode + " - ON YOUR BLACKLISTED";
                         } else {
-                            buildMessage = licenseShortCode + ": ok";
+                            buildMessage = licenseShortCode + " - OK";
                         }
                     } else {
                         failBuild = true;
-                        buildMessage = "declares unrecognized license name, "+licenseName;
+                        buildMessage = "no license declared";
                     }
                     artifactLicenses.put(mavenArtifact.getArtifactId(), buildMessage);
                 }
