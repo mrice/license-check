@@ -43,8 +43,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	</developers>
 
 	<properties>
-		<mavenVersion>2.2.1</mavenVersion>
-		<pluginPluginVersion>3.2</pluginPluginVersion>
+		<maven.version>2.2.1</maven.version>
+		<plugin.plugin.version>3.2</plugin.plugin.version>
+        <gson.version>2.2.2</gson.version>
+        <httpclient.version>4.1</httpclient.version>
+        <maven.plugin.api>3.0</maven.plugin.api>
+        <aether.version>1.8</aether.version>
 	</properties>
 
 	<dependencies>
@@ -52,17 +56,17 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-project</artifactId>
-			<version>${mavenVersion}</version><!-- TODO: is this the right version? shouldn't I be on 3.0? -->
+			<version>${maven.version}</version><!-- TODO: is this the right version? shouldn't I be on 3.0? -->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-model</artifactId>
-			<version>${mavenVersion}</version>
+			<version>${maven.version}</version>
 		</dependency>
 		<dependency><!-- TODO: is this still required? -->
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
-			<version>${pluginPluginVersion}</version>
+			<version>${plugin.plugin.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -71,29 +75,29 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.2.2</version>
+			<version>${gson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.1</version>
+			<version>${httpclient.version}</version>
 		</dependency>
 		
 		<!-- Aether dependencies -->
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>3.0</version>
+			<version>${maven.plugin.api}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sonatype.aether</groupId>
 			<artifactId>aether-api</artifactId>
-			<version>1.8</version>
+			<version>${aether.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sonatype.aether</groupId>
 			<artifactId>aether-util</artifactId>
-			<version>1.8</version>
+			<version>${aether.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -103,7 +107,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>${pluginPluginVersion}</version>
+					<version>${plugin.plugin.version}</version>
 					<configuration>
 						<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
 					</configuration>
@@ -144,6 +148,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 			</plugins>
 		</pluginManagement>
 	</build>
+
 	<!-- this is temporary: -->
 	<distributionManagement>
 		<repository>
@@ -152,4 +157,5 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+
 </project>

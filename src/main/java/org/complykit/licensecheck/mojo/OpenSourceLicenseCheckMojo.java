@@ -274,13 +274,11 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 				final Artifact parent = retrieveArtifact(parentArtifactCoords);
 				if (parent != null) {
 					//check the recursion depth
-					if (currentDepth >= maxSearchDepth)
-					{
+					if (currentDepth >= maxSearchDepth) {
 						return null; //TODO throw an exception
 					}
 					licenseName = recurseForLicenseName(parent, currentDepth + 1);
-				}
-				else {
+				} else {
 					return null;
 				}
 			}
@@ -292,28 +290,28 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 	}
 	
 	private String readPomContents(final String path) {
+
 		final StringBuffer buffer = new StringBuffer();
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(path));
-		}
-		catch (final FileNotFoundException e1) {
+		} catch (final FileNotFoundException e1) {
 			//TODO figure this one out
 		}
+
 		String line = null;
 		try {
 			while ((line = reader.readLine()) != null) {
 				buffer.append(line);
 			}
-		}
-		catch (final IOException e) {
+		} catch (final IOException e) {
 			//TODO figure this one out
 		}
+
 		finally {
 			try {
 				reader.close();
-			}
-			catch (final IOException e) {
+			} catch (final IOException e) {
 				//TODO figure this one out
 			}
 		}
@@ -376,10 +374,10 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 		ArtifactResult result = null;
 		try {
 			result = repoSystem.resolveArtifact(repoSession, request);
-		}
-		catch (final ArtifactResolutionException e) {
+		} catch (final ArtifactResolutionException e) {
 			getLog().error("Could not resolve parent artifact (" + coordinates + "): " + e.getMessage());
 		}
+
 		if (result != null) {
 			return result.getArtifact();
 		}
@@ -418,6 +416,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 	 */
 	//TODO I know, I know... this is really raw... will make it prettier
 	private void loadDescriptors() {
+
 		final String licensesPath = "/licenses.txt";
 		final InputStream is = getClass().getResourceAsStream(licensesPath);
 		BufferedReader reader = null;
@@ -429,15 +428,12 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 			while ((line = reader.readLine()) != null) {
 				buffer.append(line + "\n");
 			}
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			getLog().error(e);
-		}
-		finally {
+		} finally {
 			try {
 				reader.close();
-			}
-			catch (final IOException e) {
+			} catch (final IOException e) {
 				//TODO
 				e.printStackTrace();
 			}

@@ -52,6 +52,7 @@ import com.google.gson.Gson;
  * @author michael rice
  *
  */
+@Deprecated
 @Mojo(name="check")
 public class ServerLicenseCheckMojo extends AbstractMojo {
 
