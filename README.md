@@ -3,7 +3,7 @@ license-check
 
 [![Build Status](https://travis-ci.org/mrice/license-check.png)](https://travis-ci.org/mrice/license-check)
 
-Current version: 0.5.1 (July 5, 2013)
+Current version: 0.5.2 (Nov 3, 2014)
 
 What is it?
 --------------
@@ -11,11 +11,11 @@ For now, **license-check** just checks to make sure that your Maven dependencies
 
 How it works
 --------------
-License-check looks at each dependency and runs a query against your Maven respository to see if the dependency declares a license that [complykit.org](http://complykit.org) recognizes. If not, then your build will **fail**. (Don't worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
+License-check looks at each dependency and runs a query against your Maven respository to see if the dependency declares a license that [complykit.org](http://www.complykit.org) recognizes. If not, then your build will **fail**. (Don't worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
 
 Isn't there already something like this?
 ---------------
-**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however, it makes sure that all the artifacts you've included in the project actually declare a license that [complykit.org](http://complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/) registered licenses. 
+**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however, it makes sure that all the artifacts you've included in the project actually declare a license that [complykit.org](http://www.complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/) registered licenses. 
 
 This doesn't sound like much, but it's critically important. If the license isn't recognized or isn't declared at all, it's very possible that the authors or contributors could claim fully copyright in the library and expose you to a lot of liability. 
 
@@ -30,7 +30,7 @@ Put license-check into your build process by adding the following to your pom.xm
     <plugin>
       <groupId>org.complykit</groupId>
       <artifactId>license-check-maven-plugin</artifactId>
-      <version>0.5.1</version>
+      <version>0.5.2</version>
       <executions>
         <execution>
           <phase>verify</phase>
@@ -84,7 +84,7 @@ Notice you need to add all three coordinates to the artifact. They should be fam
 
 Is this it?
 ---------------
-**Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [complykit.org mailing list](http://complykit.org). For more about what's on deck, see my [backlog](https://github.com/mrice/license-check/wiki/Backlog).
+**Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [complykit.org mailing list](http://www.complykit.org). For more about what's on deck, see my [backlog](https://github.com/mrice/license-check/wiki/Backlog).
 
 
 Trust me, I'm a lawyer.

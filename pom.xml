@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -14,8 +12,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 
 	<groupId>org.complykit</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.5.1</version>
+	<version>0.5.2</version>
 	<packaging>maven-plugin</packaging>
+
 	<name>License Check Plugin</name>
 	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
 	<url>http://complykit.org</url>
@@ -43,30 +42,23 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	</developers>
 
 	<properties>
-		<maven.version>2.2.1</maven.version>
-		<plugin.plugin.version>3.2</plugin.plugin.version>
-        <gson.version>2.2.2</gson.version>
-        <httpclient.version>4.1</httpclient.version>
-        <maven.plugin.api>3.0</maven.plugin.api>
-        <aether.version>1.8</aether.version>
+		<maven.version>3.1.1</maven.version>
+		<maven.test-plugin.version>3.1.0</maven.test-plugin.version>
+		<maven.plugin.version>3.1</maven.plugin.version>
+		<gson.version>2.3</gson.version>
+		<httpclient.version>4.3.3</httpclient.version>
 	</properties>
 
 	<dependencies>
-		<!-- plugin requirements -->
 		<dependency>
 			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-project</artifactId>
-			<version>${maven.version}</version><!-- TODO: is this the right version? shouldn't I be on 3.0? -->
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-model</artifactId>
+			<artifactId>maven-core</artifactId>
 			<version>${maven.version}</version>
 		</dependency>
-		<dependency><!-- TODO: is this still required? -->
+		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
-			<version>${plugin.plugin.version}</version>
+			<version>${maven.plugin.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -82,23 +74,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 			<artifactId>httpclient</artifactId>
 			<version>${httpclient.version}</version>
 		</dependency>
-		
-		<!-- Aether dependencies -->
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>${maven.plugin.api}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sonatype.aether</groupId>
-			<artifactId>aether-api</artifactId>
-			<version>${aether.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sonatype.aether</groupId>
-			<artifactId>aether-util</artifactId>
-			<version>${aether.version}</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -107,7 +82,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>${plugin.plugin.version}</version>
+					<version>${maven.plugin.version}</version>
 					<configuration>
 						<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
 					</configuration>
