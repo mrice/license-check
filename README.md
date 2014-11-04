@@ -47,6 +47,8 @@ Put license-check into your build process by adding the following to your pom.xm
 
 ```
 
+(* Note that the artifact was published to Maven Central late on Nov. 3, 2014; it may take a day or two to hit to the repos.)
+
 When you do this, your builds will start failing if you include a dependency with a license that depwatch doesn't recognize (or, worse, the dependency doesn't declare a license at all).
 
 Configuration options
