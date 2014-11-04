@@ -5,6 +5,12 @@ license-check
 
 Current version: 0.5.2 (Nov 3, 2014)
 
+```xml
+	<groupId>org.complykit</groupId>
+	<artifactId>license-check-maven-plugin</artifactId>
+	<version>0.5.2</version>
+```
+
 What is it?
 --------------
 For now, **license-check** just checks to make sure that your Maven dependencies have a license declared in their POM files and that you aren't including a license on your project's blacklist. There's more on the horizon but this is an early release. 
@@ -80,11 +86,6 @@ Note that you need to enter the exact license code that complykit.org uses. Unti
 ```
 
 Notice you need to add all three coordinates to the artifact. They should be familiar, and the correspond to the groupId, artifactId, and version that are the common elements of most poms. To add more than just one artifact to your exclude list, just add multiple param elements.
-
-
-Is this it?
----------------
-**Absolutely not!** This is just a rough beginning. Stay tuned by signing up my [complykit.org mailing list](http://www.complykit.org). For more about what's on deck, see my [backlog](https://github.com/mrice/license-check/wiki/Backlog).
 
 
 Trust me, I'm a lawyer.
