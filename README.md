@@ -6,9 +6,11 @@ license-check
 Current version: 0.5.2 (Nov 3, 2014)
 
 ```xml
-	<groupId>org.complykit</groupId>
-	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.5.2</version>
+    <dependency>
+        <groupId>org.complykit</groupId>
+        <artifactId>license-check-maven-plugin</artifactId>
+        <version>0.5.2</version>
+	</dependency>
 ```
 
 What is it?
