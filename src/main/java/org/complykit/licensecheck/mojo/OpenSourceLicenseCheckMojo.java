@@ -127,6 +127,13 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     private String[] blacklist;
 
     /**
+     * A list of scopes to exclude. May be used to exclude artifacts with test or provided scope from license check.
+     * Example: &lt;configuration&gt; &lt;excludedScopes&gt; &lt;param&gt;test&lt;/param&gt; &lt;param&gt;provided&lt;/param&gt; &lt;/excludedScopes&gt; &lt;/configuration&gt;
+     */
+    @Parameter(property = "os-check.excludedScopes")
+    private String[] excludedScopes;
+
+    /**
      * Used to hold the list of license descriptors. Generation is lazy on the first method call to use it.
      *
      */
@@ -166,6 +173,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
         final Set<String> excludeSet = getAsLowerCaseSet(excludes);
         final Set<String> blacklistSet = getAsLowerCaseSet(blacklist);
+        final Set<String> excludedScopesSet = getAsLowerCaseSet(excludedScopes);
         final List<Pattern> excludePatternList = getAsPatternList(excludesRegex);
 
         final Set<Artifact> artifacts = project.getDependencyArtifacts();
@@ -175,9 +183,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
         boolean buildFails = false;
         for (final Artifact artifact : artifacts) {
-            final String coordinates = artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
-
-            if (!isExcluded(excludeSet, excludePatternList, coordinates)) {
+            if (!isExcluded(excludeSet, excludePatternList, excludedScopesSet, artifact)) {
                 final ArtifactRequest request = new ArtifactRequest();
                 request.setArtifact(RepositoryUtils.toArtifact(artifact));
                 request.setRepositories(remoteRepos);
@@ -194,7 +200,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
                 String code = convertLicenseNameToCode(licenseName);
                 if (code == null) {
                     buildFails = true;
-                    getLog().warn("Build will fail because of artifact '" + coordinates + "' and license'" + licenseName + "'.");
+                    getLog().warn("Build will fail because of artifact '" + toCoordinates(artifact) + "' and license'" + licenseName + "'.");
                 } else if (isContained(blacklistSet, code)) {
                     buildFails = true;
                     code += " IS ON YOUR BLACKLIST";
@@ -236,6 +242,10 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
         getLog().info("RESULT: license check complete, no issues found.");
         getLog().info("");
 
+    }
+
+    private String toCoordinates(Artifact artifact) {
+        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
     }
 
     private String recurseForLicenseName(final Artifact artifact, final int currentDepth) {
@@ -428,7 +438,11 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
         }
     }
 
-    private boolean isExcluded(final Set<String> excludeSet, final List<Pattern> patternList, final String template) {
+    private boolean isExcluded(final Set<String> excludeSet, final List<Pattern> patternList, final Set<String> excludedScopes, final Artifact artifact){
+        return isExcludedTemplate(excludeSet, patternList, toCoordinates(artifact)) || excludedScopes.contains(artifact.getScope());
+    }
+
+    private boolean isExcludedTemplate(final Set<String> excludeSet, final List<Pattern> patternList, final String template) {
         if (isContained(excludeSet, template)) {
             return true;
         }
