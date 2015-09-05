@@ -64,7 +64,8 @@ import org.eclipse.aether.resolution.ArtifactResult;
  * extract the license information, and then convert the licenses into codes.
  * If a license cannot be verified or if the license appears on the user's blacklist, then the build will fail.
  *
- * @see https://github.com/mrice/license-check
+ * For more, visit https://github.com/mrice/license-check
+ *
  * @author michael.rice
  *
  */
@@ -76,7 +77,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     /**
      * This is the repo system required by Aether
      *
-     * @see http://blog.sonatype.com/people/2011/01/how-to-use-aether-in-maven-plugins/
+     * For more, visit http://blog.sonatype.com/people/2011/01/how-to-use-aether-in-maven-plugins/
      */
     @Component
     private RepositorySystem repoSystem;
@@ -87,7 +88,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     /**
      * The current repository and network configuration of Maven
      *
-     * @see http://blog.sonatype.com/people/2011/01/how-to-use-aether-in-maven-plugins/
+     * For more, visit http://blog.sonatype.com/people/2011/01/how-to-use-aether-in-maven-plugins/
      * @readonly
      */
     @Parameter(defaultValue = "${repositorySystemSession}")
