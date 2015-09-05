@@ -12,7 +12,7 @@
 
 	<groupId>org.complykit</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.5.3</version>
+	<version>0.5.2</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>License Check Plugin</name>
