@@ -9,17 +9,27 @@ See below for how to add it to your pom.
 
 What is it?
 --------------
-For now, **license-check** just checks to make sure that your Maven dependencies have a license declared in their POM files and that you aren't including a license on your project's blacklist. There's more on the horizon but this is an early release. 
+For now, **license-check** just checks to make sure that your Maven dependencies have a license declared in their POM
+files and that you aren't including a license on your project's blacklist. There's more on the horizon but this is an
+early release.
 
 How it works
 --------------
-License-check looks at each dependency and runs a query against your Maven respository to see if the dependency declares a license that [complykit.org](http://www.complykit.org) recognizes. If not, then your build will **fail**. (Don't worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
+License-check looks at each dependency and runs a query against your Maven respository to see if the dependency declares
+a license that [complykit.org](http://www.complykit.org) recognizes. If not, then your build will **fail**. (Don't
+worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
 
 Isn't there already something like this?
 ---------------
-**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however, it makes sure that all the artifacts you've included in the project actually declare a license that [complykit.org](http://www.complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/) registered licenses. 
+**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin
+is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however,
+it makes sure that all the artifacts you've included in the project actually declare a license that
+[complykit.org](http://www.complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/)
+registered licenses.
 
-This doesn't sound like much, but it's critically important. If the license isn't recognized or isn't declared at all, it's very possible that the authors or contributors could claim fully copyright in the library and expose you to a lot of liability. 
+This doesn't sound like much, but it's critically important. If the license isn't recognized or isn't declared at all,
+it's very possible that the authors or contributors could claim fully copyright in the library and expose you to a lot
+of liability.
 
 How to use it
 ---------------
@@ -47,13 +57,18 @@ Put license-check into your build process by adding the following to your pom.xm
 
 ```
 
-(* Note that the artifact was published to Maven Central late on Nov. 3, 2014; it may take a day or two to hit to the repos.)
+(* Note that the artifact was published to Maven Central late on Nov. 3, 2014; it may take a day or two to hit to the
+repos.)
 
-When you do this, your builds will start failing if you include a dependency with a license that depwatch doesn't recognize (or, worse, the dependency doesn't declare a license at all).
+When you do this, your builds will start failing if you include a dependency with a license that depwatch doesn't
+recognize (or, worse, the dependency doesn't declare a license at all).
 
 Configuration options
 ---------------
-**Create a blacklist of licenses:** Right or wrong, many organizations and their legal teams have declared certain licenses to be incompatible with their own licenseing goals. Detecting those licenses and failing your build when you accidentally include one is one of the principal goals of this project. For now, you'll need to add licenses to your blacklist manually. Add a configuration setting to your plugin such as the following:
+**Create a blacklist of licenses:** Right or wrong, many organizations and their legal teams have declared certain
+licenses to be incompatible with their own licenseing goals. Detecting those licenses and failing your build when you
+accidentally include one is one of the principal goals of this project. For now, you'll need to add licenses to your
+blacklist manually. Add a configuration setting to your plugin such as the following:
 
 ```xml
   <plugin>
@@ -68,7 +83,8 @@ Configuration options
   </plugin>
 ```
 
-Note that you need to enter the exact license code that complykit.org uses. Until I can get that documented, refer to the short codes used by the (Open Source Initiative)[http://opensource.org]--those are the basis of the codes I'm using.
+Note that you need to enter the exact license code that complykit.org uses. Until I can get that documented, refer to
+the short codes used by the (Open Source Initiative)[http://opensource.org]--those are the basis of the codes I'm using.
 
 **To exclude artifacts:** Add the following configuration setting to the plugin:
 
@@ -83,9 +99,28 @@ Note that you need to enter the exact license code that complykit.org uses. Unti
   </plugin>
 ```
 
-Notice you need to add all three coordinates to the artifact. They should be familiar, and the correspond to the groupId, artifactId, and version that are the common elements of most poms. To add more than just one artifact to your exclude list, just add multiple param elements.
+Notice you need to add all three coordinates to the artifact. They should be familiar, and the correspond to the
+groupId, artifactId, and version that are the common elements of most poms. To add more than just one artifact to your
+exclude list, just add multiple param elements.
+
+**To exclude score:** if you don't want to consider dependencies from the pom with certain scopes, especially provided
+or test, then you can exclude them with @jrummler's most excellent addition:
+
+```xml
+  <plugin>
+    ...
+    <configuration>
+      <excludedScopes>
+        <param>test</param>
+        <param>provided</param>
+      </excludedScopes>
+    </configuration>
+  </plugin>
+```
 
 
 Trust me, I'm a lawyer.
 ---------------
-I hope you'll contact me with any questions or issues (or use the github issue tracker). I really (really!) hope you'll give me some feedback, good or bad. And yes, I really am a lawyer (licensed in Washington State and probably California very soon). Obvious disclaimer: the purpose of this tool is not to give you legal advice, duh.
+I hope you'll contact me with any questions or issues (or use the github issue tracker). I really (really!) hope you'll
+give me some feedback, good or bad. And yes, I really am a lawyer (licensed in Washington State and California).
+Obvious disclaimer: the purpose of this tool is not to give you legal advice, duh.

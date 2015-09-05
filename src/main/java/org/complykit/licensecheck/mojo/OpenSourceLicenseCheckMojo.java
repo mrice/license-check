@@ -60,7 +60,8 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 
 /**
- * This plugin uses Aether to cruise through the dependencies in the project, find the related pom files, extract the license information, and then convert the licenses into codes.
+ * This plugin uses Aether to cruise through the dependencies in the project, find the related pom files,
+ * extract the license information, and then convert the licenses into codes.
  * If a license cannot be verified or if the license appears on the user's blacklist, then the build will fail.
  *
  * @see https://github.com/mrice/license-check
