@@ -101,8 +101,8 @@ Notice you need to add all three coordinates to the artifact. They should be fam
 groupId, artifactId, and version that are the common elements of most poms. To add more than just one artifact to your
 exclude list, just add multiple param elements.
 
-**To exclude score:** if you don't want to consider dependencies from the pom with certain scopes, especially provided
-or test, then you can exclude them with @jrummler's most excellent addition:
+**To exclude scope:** if you don't want to consider dependencies from the pom with certain scopes, especially provided
+or test, then you can exclude them:
 
 ```xml
   <plugin>
@@ -116,6 +116,8 @@ or test, then you can exclude them with @jrummler's most excellent addition:
   </plugin>
 ```
 
+The idea here is that you may feel comfortable excluding some artifacts from considering. Not clear at all whether this
+solves difficult licensing issues, but you may want to do it.
 
 Trust me, I'm a lawyer.
 ---------------
