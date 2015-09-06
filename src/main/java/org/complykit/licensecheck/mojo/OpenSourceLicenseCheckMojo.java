@@ -185,7 +185,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
         boolean buildFails = false;
         for (final Artifact artifact : artifacts) {
-            if (!isExcluded(excludeSet, excludePatternList, excludedScopesSet, artifact)) {
+            if (!artifactIsOnExcludeList(excludeSet, excludePatternList, excludedScopesSet, artifact)) {
                 final ArtifactRequest request = new ArtifactRequest();
                 request.setArtifact(RepositoryUtils.toArtifact(artifact));
                 request.setRepositories(remoteRepos);
@@ -220,10 +220,6 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
         getLog().info("the license is one of the Open Source Initiative (OSI) approved ");
         getLog().info("licenses. If it can't find a match or if the license is on your ");
         getLog().info("declared blacklist, then the build will fail.");
-        getLog().info("");
-        getLog().info("This plugin is under continuous development, so please sign up for");
-        getLog().info("the mailing list at http://complykit.org (and get some periodic insight");
-        getLog().info("on open source licensing for developers too!).");
         getLog().info("");
         getLog().info("This plugin and its author are not associated with the OSI.");
         getLog().info("Please send me feedback: me@michaelrice.com. Thanks!");
@@ -311,7 +307,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     }
 
     /**
-     * This function looks for the license textual description. I didn't really want to parse the pom xml since we're just looking for one little snippet of the content.
+     * This function looks for the license textual description. I didn't really want to parse the pom xml since we're
+     * just looking for one little snippet of the content.
      *
      * @param raw
      * @return
@@ -377,7 +374,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     }
 
     /**
-     * This is the method that looks at the textual description of the license and returns a code version by running regex. It needs a lot of optimization.
+     * This is the method that looks at the textual description of the license and returns a code version by running
+     * regex. It needs a lot of optimization.
      *
      * @param licenseName
      * @return
@@ -401,8 +399,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     }
 
     /**
-     * This method looks for a resource file bundled with the plugin that contains a tab delimited version of the regex and the codes. Future versions of the plugin will retrieve
-     * fresh versions of the file from the server so we can take advantage of improvements in what we know and what we learn.
+     * This method looks for a resource file bundled with the plugin that contains a tab delimited version of the regex
+     * and the codes. Future versions of the plugin may retrieve fresh versions of the file from the server so we can
+     * take advantage of improvements in what we know and what we learn.
      */
     // TODO I know, I know... this is really raw... will make it prettier
     private void loadDescriptors() {
@@ -440,11 +439,21 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
         }
     }
 
-    private boolean isExcluded(final Set<String> excludeSet, final List<Pattern> patternList, final Set<String> excludedScopes, final Artifact artifact){
+    /**
+     * Checks to see if an artifact is on the user's exclude list
+     * @param excludeSet
+     * @param patternList
+     * @param excludedScopes
+     * @param artifact
+     * @return
+     */
+    private boolean artifactIsOnExcludeList(final Set<String> excludeSet, final List<Pattern> patternList,
+                                            final Set<String> excludedScopes, final Artifact artifact){
         return isExcludedTemplate(excludeSet, patternList, toCoordinates(artifact)) || excludedScopes.contains(artifact.getScope());
     }
 
-    private boolean isExcludedTemplate(final Set<String> excludeSet, final List<Pattern> patternList, final String template) {
+    private boolean isExcludedTemplate(final Set<String> excludeSet, final List<Pattern> patternList,
+                                       final String template) {
         if (isContained(excludeSet, template)) {
             return true;
         }
