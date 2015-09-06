@@ -3,9 +3,7 @@ license-check
 
 [![Build Status](https://travis-ci.org/mrice/license-check.png)](https://travis-ci.org/mrice/license-check)
 
-Current version: 0.5.2 (Nov 3, 2014)
-
-See below for how to add it to your pom.
+Current version: 0.5.3 (Sep 5, 2015)
 
 What is it?
 --------------
