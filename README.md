@@ -16,12 +16,12 @@ early release.
 How it works
 --------------
 License-check looks at each dependency and runs a query against your Maven respository to see if the dependency declares
-a license that [complykit.org](http://www.complykit.org) recognizes. If not, then your build will **fail**. (Don't
-worry, there's a way around this if your dependency isn't in the public repo. See the configuration options below.)
+a license that it recognizes. If not, then your build will **fail**. (Don't worry if you're hoping for a different
+result, there's a way around this if your dependency isn't clear on its licensing. See the configuration options below.)
 
 Isn't there already something like this?
 ---------------
-**No, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin
+**Eh, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin
 is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however,
 it makes sure that all the artifacts you've included in the project actually declare a license that
 [complykit.org](http://www.complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/)
