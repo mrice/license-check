@@ -40,7 +40,7 @@ Put license-check into your build process by adding the following to your pom.xm
     <plugin>
       <groupId>org.complykit</groupId>
       <artifactId>license-check-maven-plugin</artifactId>
-      <version>0.5.2</version>
+      <version>0.5.3</version>
       <executions>
         <execution>
           <phase>verify</phase>
