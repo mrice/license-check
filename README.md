@@ -55,8 +55,8 @@ Put license-check into your build process by adding the following to your pom.xm
 
 ```
 
-When you do this, **your builds will start failing if you include a dependency with an unrecognized license (or, worse,
-an undeclared a license).
+When you do this, **your builds will start failing** if you include a dependency with an unrecognized license (or,
+worse, an undeclared a license).
 
 Configuration options
 ---------------
@@ -77,9 +77,6 @@ blacklist manually. Add a configuration setting to your plugin such as the follo
     </configuration>
   </plugin>
 ```
-
-Note that you need to enter the exact license code that complykit.org uses. Until I can get that documented, refer to
-the short codes used by the (Open Source Initiative)[http://opensource.org]--those are the basis of the codes I'm using.
 
 **To exclude artifacts:** Add the following configuration setting to the plugin:
 
