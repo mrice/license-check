@@ -477,7 +477,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     }
 
     boolean isContained(final Set<String> set, final String template) {
-        if (set!=null || template != null) {
+        if (set!=null && template != null) {
             return set.contains(template.toLowerCase(LOCALE));
         }
         return false;
