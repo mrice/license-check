@@ -129,6 +129,13 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     String[] blacklist;
 
     /**
+     * A list of whitelisted licenses. Example: &lt;configuration&gt; &lt;whitelist&gt; &lt;param&gt;agpl-3.0&lt;/param&gt; &lt;param&gt;gpl-2.0&lt;/param&gt;
+     * &lt;param&gt;gpl-3.0&lt;/param&gt; &lt;/blacklist&gt; &lt;/configuration&gt;
+     */
+    @Parameter(property = "os-check.whitelist")
+    String[] whitelist;
+
+    /**
      * A list of scopes to exclude. May be used to exclude artifacts with test or provided scope from license check.
      * Example: &lt;configuration&gt; &lt;excludedScopes&gt; &lt;param&gt;test&lt;/param&gt; &lt;param&gt;provided&lt;/param&gt; &lt;/excludedScopes&gt; &lt;/configuration&gt;
      */
@@ -149,6 +156,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
         final Set<String> excludeSet = getAsLowerCaseSet(excludes);
         final Set<String> blacklistSet = getAsLowerCaseSet(blacklist);
+        final Set<String> whitelistSet = getAsLowerCaseSet(whitelist);
         final Set<String> excludedScopesSet = getAsLowerCaseSet(excludedScopes);
         final List<Pattern> excludePatternList = getAsPatternList(excludesRegex);
 
@@ -180,6 +188,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
                 } else if (isContained(blacklistSet, code)) {
                     buildFails = true;
                     code += " IS ON YOUR BLACKLIST";
+                } else if (isContained(whitelistSet,code)==false){
+                    buildFails = true;
+                    code += " IS NOT ON YOUR WHITELIST";
                 }
                 licenses.put(artifact.getArtifactId(), code);
             } else {
@@ -193,7 +204,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
         getLog().info("license declared in the pom. It then tries to determine whether ");
         getLog().info("the license is one of the Open Source Initiative (OSI) approved ");
         getLog().info("licenses. If it can't find a match or if the license is on your ");
-        getLog().info("declared blacklist, then the build will fail.");
+        getLog().info("declared blacklist or not on your declared whitelist, then the build will fail.");
         getLog().info("");
         getLog().info("This plugin and its author are not associated with the OSI.");
         getLog().info("Please send me feedback: me@michaelrice.com. Thanks!");
@@ -206,9 +217,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
         if (buildFails) {
             getLog().info("");
-            getLog().info("RESULT: At least one license could not be verified or appears on your blacklist. Build fails.");
+            getLog().info("RESULT: At least one license could not be verified or appears on your blacklist or is not on your whitelist. Build fails.");
             getLog().info("");
-            throw new MojoFailureException("blacklist of unverifiable license");
+            throw new MojoFailureException("blacklist/whitelist of unverifiable license");
         }
         getLog().info("");
         getLog().info("RESULT: license check complete, no issues found.");
@@ -466,7 +477,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     }
 
     boolean isContained(final Set<String> set, final String template) {
-        if (template != null) {
+        if (set!=null || template != null) {
             return set.contains(template.toLowerCase(LOCALE));
         }
         return false;
