@@ -147,6 +147,12 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    */
   @Parameter(property = "os-check.excludedScopes")
   String[] excludedScopes;
+  
+  /**
+   * Indicates whether the build will continue even if there are check errors.
+   */
+  @Parameter(property = "os-check.failOnError", defaultValue = "true")
+  boolean failOnError = true;
 
   /**
    * Used to hold the list of license descriptors. Generation is lazy on the first method call to use it.
@@ -232,7 +238,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
       getLog().info("");
       getLog().info("RESULT: At least one license could not be verified or appears on your blacklist or is not on your whitelist. Build fails.");
       getLog().info("");
-      throw new MojoFailureException("blacklist/whitelist of unverifiable license");
+      if (failOnError) {
+        throw new MojoFailureException("blacklist/whitelist of unverifiable license");
+      }
     }
     getLog().info("");
     getLog().info("RESULT: license check complete, no issues found.");
