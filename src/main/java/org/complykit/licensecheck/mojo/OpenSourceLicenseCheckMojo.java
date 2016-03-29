@@ -39,6 +39,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -236,16 +237,16 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
     if (buildFails) {
       getLog().info("");
-      getLog().info("RESULT: At least one license could not be verified or appears on your blacklist or is not on your whitelist. Build fails.");
+      getLog().info("RESULT: At least one license could not be verified or appears on your blacklist or is not on your whitelist");
       getLog().info("");
       if (failOnError) {
         throw new MojoFailureException("blacklist/whitelist of unverifiable license");
       }
+    } else {
+      getLog().info("");
+      getLog().info("RESULT: license check complete, no issues found.");
+      getLog().info("");
     }
-    getLog().info("");
-    getLog().info("RESULT: license check complete, no issues found.");
-    getLog().info("");
-
   }
 
   Set<String> getAsLowerCaseSet(final String[] src)
@@ -276,7 +277,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return target;
   }
 
-  String toCoordinates(Artifact artifact)
+  String toCoordinates(final Artifact artifact)
   {
     return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
   }
