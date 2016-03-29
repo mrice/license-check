@@ -113,6 +113,17 @@ or test, then you can exclude them:
 The idea here is that you may feel comfortable excluding some artifacts from considering. Not clear at all whether this
 solves difficult licensing issues, but you may want to do it.
 
+**To avoid build failure:** if you don't want to break your build when errors detected:
+
+```xml
+  <plugin>
+    ...
+    <configuration>
+      <failOnError>false</failOnError>
+    </configuration>
+  </plugin>
+```
+
 Trust me, I'm a lawyer.
 ---------------
 I hope you'll contact me with any questions or issues (or use the github issue tracker). I really (really!) hope you'll
