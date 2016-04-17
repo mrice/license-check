@@ -21,9 +21,7 @@ Isn't there already something like this?
 ---------------
 **Eh, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin
 is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however,
-it makes sure that all the artifacts you've included in the project actually declare a license that
-[complykit.org](http://www.complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/)
-registered licenses.
+the plugin just makes sure it recognizes the declared licenses as one of the [opensource.org](http://www.opensource.org/) registered licenses.
 
 This doesn't sound like much, but it's critically important. If the license isn't recognized or isn't declared at all,
 it's very possible that the authors or contributors could claim fully copyright in the library and expose you to a lot
@@ -113,8 +111,11 @@ or test, then you can exclude them:
 The idea here is that you may feel comfortable excluding some artifacts from considering. Not clear at all whether this
 solves difficult licensing issues, but you may want to do it.
 
-Trust me, I'm a lawyer.
----------------
-I hope you'll contact me with any questions or issues (or use the github issue tracker). I really (really!) hope you'll
-give me some feedback, good or bad. And yes, I really am a lawyer (licensed in Washington State and California).
-Obvious disclaimer: the purpose of this tool is not to give you legal advice, duh.
+W/R/T IANAL
+---
+For the record, the original author actually is a lawyer -- but the usual qualifications about "this is not legal advice" apply with full force. Of course.
+
+
+License
+---
+Open source licensed under the [MIT License](https://opensource.org/licenses/MIT).
