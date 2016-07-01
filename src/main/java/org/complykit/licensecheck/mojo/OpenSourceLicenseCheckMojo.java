@@ -340,8 +340,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final String nameTagStart = "<name>", nameTagStop = "</name>";
     if (raw.indexOf(licenseTagStart) != -1) {
       final String licenseContents = raw.substring(raw.indexOf(licenseTagStart) + licenseTagStart.length(), raw.indexOf(licenseTagStop));
-      final String name = licenseContents.substring(licenseContents.indexOf(nameTagStart) + nameTagStart.length(), licenseContents.indexOf(nameTagStop));
-      return name;
+      return licenseContents.substring(licenseContents.indexOf(nameTagStart) + nameTagStart.length(), licenseContents.indexOf(nameTagStop));
     }
     return null;
   }
@@ -451,9 +450,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
       }
     }
 
-    final String lines[] = buffer.toString().split("\n");
+    final String[] lines = buffer.toString().split("\n");
     for (final String line : lines) {
-      final String columns[] = line.split("\\t");
+      final String[] columns = line.split("\\t");
       final LicenseDescriptor descriptor = new LicenseDescriptor();
       descriptor.setCode(columns[0]);
       descriptor.setLicenseName(columns[2]);
