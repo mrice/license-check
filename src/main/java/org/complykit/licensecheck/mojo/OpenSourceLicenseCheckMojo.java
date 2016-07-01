@@ -151,7 +151,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
   /**
    * Used to hold the list of license descriptors. Generation is lazy on the first method call to use it.
    */
-  List<LicenseDescriptor> descriptors = null;
+  List<LicenseDescriptor> descriptors;
 
   public void execute() throws MojoExecutionException, MojoFailureException
   {
@@ -194,14 +194,14 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
         }
         String code = convertLicenseNameToCode(licenseName);
         if (code == null) {
-          if (excludeNoLicense==false) {
+          if (!excludeNoLicense) {
             buildFails = true;
             getLog().warn("Build will fail because of artifact '" + toCoordinates(artifact) + "' and license'" + licenseName + "'.");
           }
-        } else if (blacklistSet.isEmpty() == false && isContained(blacklistSet, code)) {
+        } else if (!blacklistSet.isEmpty() && isContained(blacklistSet, code)) {
           buildFails = true;
           code += " IS ON YOUR BLACKLIST";
-        } else if (whitelistSet.isEmpty() == false && isContained(whitelistSet, code) == false) {
+        } else if (!whitelistSet.isEmpty() && !isContained(whitelistSet, code)) {
           buildFails = true;
           code += " IS NOT ON YOUR WHITELIST";
         }
