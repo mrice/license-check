@@ -23,23 +23,6 @@ THE SOFTWARE.
  */
 package org.complykit.licensecheck.mojo;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -59,6 +42,10 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 
 import java.io.*;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -285,11 +272,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
   String recurseForLicenseName(final Artifact artifact, final int currentDepth) throws IOException
   {
 
-    final File artifactDirectory = artifact.getFile().getParentFile();
-    String directoryPath = artifactDirectory.getAbsolutePath();
-    directoryPath += "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".pom";
-
-    final String pom = readPomContents(directoryPath);
+    final String pom = readPomContents(artifact);
 
     // first, look for a license
     String licenseName = extractLicenseName(pom);
@@ -314,14 +297,44 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return licenseName;
   }
 
-  String readPomContents(final String path) throws IOException
+  String readPomContents(final Artifact artifact) throws IOException
   {
+
+    final File artifactDirectory = artifact.getFile().getParentFile();
+    String path = artifactDirectory.getAbsolutePath();
+    path += "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".pom";
+
 
     final StringBuilder buffer = new StringBuilder();
     BufferedReader reader = null;
 
-    reader = new BufferedReader(new FileReader(path));
+    //check if the file exists
+    File pathFile = new File(path);
+    if (!pathFile.exists()) {
+      //read the pom from the jar
+      if (artifact.getFile().exists()) {
+        if (artifact.getFile()
+                    .toString()
+                    .toLowerCase()
+                    .endsWith("pom.xml")) { // if the artifact itself is a pom, load it
+          reader = new BufferedReader(new FileReader(artifact.getFile()));
+        } else if (artifact.getFile()
+                           .toString()
+                           .toLowerCase()
+                           .endsWith(".jar")) {  // if the artifact is a jar, try to open the pom inside
+          FileSystem jarFs = FileSystems.newFileSystem(artifact.getFile().toPath(), null);
+          Path jarPom = jarFs.getPath(
+                  "META-INF/maven/" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/pom.xml");
+          if (Files.exists(jarPom)) {
+            reader = Files.newBufferedReader(jarPom);
+          }
+        }
+      }
 
+    } else {
+
+      reader = new BufferedReader(new FileReader(path));
+    }
     String line = null;
 
     while ((line = reader.readLine()) != null) {
