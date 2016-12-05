@@ -23,22 +23,12 @@ THE SOFTWARE.
  */
 package org.complykit.licensecheck.mojo;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -385,7 +375,14 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     try {
       result = repoSystem.resolveArtifact(repoSession, request);
     } catch (final ArtifactResolutionException e) {
-      getLog().error("Could not resolve parent artifact (" + coordinates + "): " + e.getMessage());
+            try {
+                org.eclipse.aether.artifact.Artifact art = request.getArtifact();
+                request
+                    .setArtifact(new DefaultArtifact(art.getGroupId(), art.getArtifactId(), "pom", art.getVersion()));
+                result = repoSystem.resolveArtifact(repoSession, request);
+            } catch (final ArtifactResolutionException ex) {
+                getLog().error("Could not resolve parent artifact (" + coordinates + "): " + ex.getMessage());
+            }
     }
 
     if (result != null) {
