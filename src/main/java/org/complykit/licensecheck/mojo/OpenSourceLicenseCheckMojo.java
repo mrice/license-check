@@ -444,7 +444,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
       getLog().error(e);
     } finally {
       try {
-        reader.close();
+        if ( reader != null){
+        	reader.close();
+        }
       } catch (final IOException e) {
         // TODO
         e.printStackTrace();
