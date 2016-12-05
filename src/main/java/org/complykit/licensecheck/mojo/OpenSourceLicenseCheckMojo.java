@@ -308,7 +308,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
   String readPomContents(final String path) throws IOException
   {
 
-    final StringBuffer buffer = new StringBuffer();
+    final StringBuilder buffer = new StringBuilder();
     BufferedReader reader = null;
 
     reader = new BufferedReader(new FileReader(path));
@@ -433,7 +433,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final InputStream is = getClass().getResourceAsStream(licensesPath);
     BufferedReader reader = null;
     descriptors = new ArrayList<LicenseDescriptor>();
-    final StringBuffer buffer = new StringBuffer();
+    final StringBuilder buffer = new StringBuilder();
     try {
       reader = new BufferedReader(new InputStreamReader(is));
       String line = null;
