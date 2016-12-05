@@ -23,12 +23,6 @@ THE SOFTWARE.
  */
 package org.complykit.licensecheck.mojo;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -46,6 +40,12 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * This plugin uses Aether to cruise through the dependencies in the project, find the related pom files,
@@ -178,7 +178,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
         String licenseName = "";
         try {
-          licenseName = recurseForLicenseName(RepositoryUtils.toArtifact(result.getArtifact()), 0);
+            if (result != null) {
+                licenseName = recurseForLicenseName(RepositoryUtils.toArtifact(result.getArtifact()), 0);
+            }
         } catch (IOException e) {
           getLog().error("Error reading license information", e);
         }
