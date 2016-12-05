@@ -12,19 +12,20 @@
 		<version>7</version>
 	</parent>
 
-	<groupId>org.complykit</groupId>
+	<groupId>at.know-center.mavenplugins</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
 	<version>0.5.4</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>License Check Plugin</name>
 	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
-	<url>http://complykit.org</url>
+	<url>https://git.know-center.tugraz.at/summary/?r=license-check.git</url>
 	<inceptionYear>2013</inceptionYear>
 
 	<scm>
-		<url>https://github.com/mrice/license-check</url>
-		<connection>scm:git:git@github.com:mrice/license-check.git</connection>
+		<url>https://git.know-center.tugraz.at/summary/?r=license-check.git</url>
+		<connection>scm:git:ssh://jschneider@git.know-center.tugraz.at:29418/license-check.git</connection>
+		<developerConnection>scm:git:ssh://jschneider@git.know-center.tugraz.at:29418/license-check.git</developerConnection>
 	</scm>
 
 	<licenses>
@@ -34,6 +35,14 @@
 		</license>
 	</licenses>
 	<developers>
+		<developer>
+			<name>Josef Schneider</name>
+			<email>jschneider@know-center.at</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
 		<developer>
 			<name>Michael Rice</name>
 			<email>me@michaelrice.com</email>
@@ -152,18 +161,6 @@
         -->
         <plugins>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.3</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.2.1</version>
@@ -209,15 +206,30 @@
         </plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>kc_external</id>
+			<name>Know-Center external Maven Repository</name>
+			<layout>default</layout>
+			<url>https://nexus.know-center.tugraz.at/content/groups/public</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
+		<repository>
+			<id>kc_external</id>
+			<name>KC Repository</name>
+			<url>dav:https://nexus.know-center.tugraz.at/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>kc_external</id>
+			<name>KC Repository</name>
+			<url>dav:https://nexus.know-center.tugraz.at/content/repositories/snapshots</url>
+		</snapshotRepository>
+
 	</distributionManagement>
 
 </project>

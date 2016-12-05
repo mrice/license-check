@@ -1,4 +1,4 @@
-package org.complykit.licensecheck.model;
+package at.knowcenter.mavenplugins.licensecheck.model;
 
 public class LicenseDescriptor {
 	private String code;

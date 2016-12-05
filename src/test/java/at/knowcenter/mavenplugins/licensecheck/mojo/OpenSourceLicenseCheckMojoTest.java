@@ -1,4 +1,4 @@
-package org.complykit.licensecheck.mojo;
+package at.knowcenter.mavenplugins.licensecheck.mojo;
 
 import org.junit.Test;
 
