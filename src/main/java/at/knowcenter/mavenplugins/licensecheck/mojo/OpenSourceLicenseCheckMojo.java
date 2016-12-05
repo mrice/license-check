@@ -23,6 +23,7 @@ THE SOFTWARE.
  */
 package at.knowcenter.mavenplugins.licensecheck.mojo;
 
+import at.knowcenter.mavenplugins.licensecheck.model.LicenseDescriptor;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -33,7 +34,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import at.knowcenter.mavenplugins.licensecheck.model.LicenseDescriptor;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -194,6 +194,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
         if (code == null) {
           if (!excludeNoLicense) {
             buildFails = true;
+            code = "[NULL] LICENSE '" + licenseName + "' IS UNKNOWN";
             getLog().warn("Build will fail because of artifact '" + toCoordinates(artifact) + "' and license'" + licenseName + "'.");
           }
         } else if (!blacklistSet.isEmpty() && isContained(blacklistSet, code)) {
