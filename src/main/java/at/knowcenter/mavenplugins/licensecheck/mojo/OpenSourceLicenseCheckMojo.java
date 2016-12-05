@@ -31,6 +31,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import at.knowcenter.mavenplugins.licensecheck.model.LicenseDescriptor;
 import org.eclipse.aether.RepositorySystem;
@@ -60,7 +61,7 @@ import java.util.regex.PatternSyntaxException;
  *
  * @author michael.rice
  */
-@Mojo(name = "os-check")
+@Mojo(name = "os-check", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class OpenSourceLicenseCheckMojo extends AbstractMojo
 {
 
@@ -160,7 +161,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final Set<String> excludedScopesSet = getAsLowerCaseSet(excludedScopes);
     final List<Pattern> excludePatternList = getAsPatternList(excludesRegex);
 
-    final Set<Artifact> artifacts = project.getDependencyArtifacts();
+    final Set<Artifact> artifacts = project.getArtifacts();
     getLog().info("Validating licenses for " + artifacts.size() + " artifact(s)");
 
     final Map<String, String> licenses = new HashMap<String, String>();
