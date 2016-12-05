@@ -162,6 +162,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final List<Pattern> excludePatternList = getAsPatternList(excludesRegex);
 
     final Set<Artifact> artifacts = project.getArtifacts();
+    artifacts.addAll(project.getDependencyArtifacts());
     getLog().info("Validating licenses for " + artifacts.size() + " artifact(s)");
 
     final Map<String, String> licenses = new HashMap<String, String>();
