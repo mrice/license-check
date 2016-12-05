@@ -103,7 +103,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
   /**
    * This is the project's remote repositories that can be used for resolving plugins and their dependencies
    */
-  @Parameter(defaultValue = "${project.remotePluginRepositories}")
+  @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
   List<RemoteRepository> remoteRepos;
 
   /**
@@ -394,6 +394,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
       result = repoSystem.resolveArtifact(repoSession, request);
     } catch (final ArtifactResolutionException e) {
             try {
+              //if the artifact jar is not found, retry the request for the pom instead of the jar
                 org.eclipse.aether.artifact.Artifact art = request.getArtifact();
                 request
                     .setArtifact(new DefaultArtifact(art.getGroupId(), art.getArtifactId(), "pom", art.getVersion()));
