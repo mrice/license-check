@@ -23,6 +23,23 @@ THE SOFTWARE.
  */
 package org.complykit.licensecheck.mojo;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -141,7 +158,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
   /**
    * Used to hold the list of license descriptors. Generation is lazy on the first method call to use it.
    */
-  List<LicenseDescriptor> descriptors = null;
+  List<LicenseDescriptor> descriptors;
 
   public void execute() throws MojoExecutionException, MojoFailureException
   {
@@ -186,14 +203,14 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
         }
         String code = convertLicenseNameToCode(licenseName);
         if (code == null) {
-          if (excludeNoLicense==false) {
+          if (!excludeNoLicense) {
             buildFails = true;
             getLog().warn("Build will fail because of artifact '" + toCoordinates(artifact) + "' and license'" + licenseName + "'.");
           }
-        } else if (blacklistSet.isEmpty() == false && isContained(blacklistSet, code)) {
+        } else if (!blacklistSet.isEmpty() && isContained(blacklistSet, code)) {
           buildFails = true;
           code += " IS ON YOUR BLACKLIST";
-        } else if (whitelistSet.isEmpty() == false && isContained(whitelistSet, code) == false) {
+        } else if (!whitelistSet.isEmpty() && !isContained(whitelistSet, code)) {
           buildFails = true;
           code += " IS NOT ON YOUR WHITELIST";
         }
@@ -221,9 +238,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     }
 
     if (buildFails) {
-      getLog().info("");
-      getLog().info("RESULT: At least one license could not be verified or appears on your blacklist or is not on your whitelist. Build fails.");
-      getLog().info("");
+      getLog().warn("");
+      getLog().warn("RESULT: At least one license could not be verified or appears on your blacklist or is not on your whitelist. Build fails.");
+      getLog().warn("");
       throw new MojoFailureException("blacklist/whitelist of unverifiable license");
     }
     getLog().info("");
@@ -260,7 +277,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return target;
   }
 
-  String toCoordinates(Artifact artifact)
+  String toCoordinates(final Artifact artifact)
   {
     return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
   }
@@ -300,7 +317,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
   String readPomContents(final String path) throws IOException
   {
 
-    final StringBuffer buffer = new StringBuffer();
+    final StringBuilder buffer = new StringBuilder();
     BufferedReader reader = null;
 
     reader = new BufferedReader(new FileReader(path));
@@ -332,8 +349,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final String nameTagStart = "<name>", nameTagStop = "</name>";
     if (raw.indexOf(licenseTagStart) != -1) {
       final String licenseContents = raw.substring(raw.indexOf(licenseTagStart) + licenseTagStart.length(), raw.indexOf(licenseTagStop));
-      final String name = licenseContents.substring(licenseContents.indexOf(nameTagStart) + nameTagStart.length(), licenseContents.indexOf(nameTagStop));
-      return name;
+      return licenseContents.substring(licenseContents.indexOf(nameTagStart) + nameTagStart.length(), licenseContents.indexOf(nameTagStop));
     }
     return null;
   }
@@ -432,7 +448,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final InputStream is = getClass().getResourceAsStream(licensesPath);
     BufferedReader reader = null;
     descriptors = new ArrayList<LicenseDescriptor>();
-    final StringBuffer buffer = new StringBuffer();
+    final StringBuilder buffer = new StringBuilder();
     try {
       reader = new BufferedReader(new InputStreamReader(is));
       String line = null;
@@ -443,16 +459,18 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
       getLog().error(e);
     } finally {
       try {
-        reader.close();
+        if ( reader != null){
+        	reader.close();
+        }
       } catch (final IOException e) {
         // TODO
         e.printStackTrace();
       }
     }
 
-    final String lines[] = buffer.toString().split("\n");
+    final String[] lines = buffer.toString().split("\n");
     for (final String line : lines) {
-      final String columns[] = line.split("\\t");
+      final String[] columns = line.split("\\t");
       final LicenseDescriptor descriptor = new LicenseDescriptor();
       descriptor.setCode(columns[0]);
       descriptor.setLicenseName(columns[2]);
