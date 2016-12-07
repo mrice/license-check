@@ -308,37 +308,37 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     //check if the file exists
     File pathFile = new File(path);
     if (!pathFile.exists()) {
-      getLog().info("File " + pathFile + " not found!");
+      getLog().debug("File " + pathFile + " not found!");
       //read the pom from the jar
-      getLog().info("File " + artifact.getFile() + " will be used instead!");
+      getLog().debug("File " + artifact.getFile() + " will be used instead!");
       if (artifact.getFile().exists()) {
-        getLog().info("File " + artifact.getFile() + " exists!");
+        getLog().debug("File " + artifact.getFile() + " exists!");
         if (artifact.getFile()
                     .toString()
                     .toLowerCase()
                     .endsWith("pom.xml")) { // if the artifact itself is a pom, load it
-          getLog().info("File " + artifact.getFile() + " is a pom, using that!");
+          getLog().debug("File " + artifact.getFile() + " is a pom, using that!");
           reader = new BufferedReader(new FileReader(artifact.getFile()));
         } else if (artifact.getFile()
                            .toString()
                            .toLowerCase()
                            .endsWith(".jar")) {
-          getLog().info(
+          getLog().debug(
                   "File " + artifact.getFile() + " is a jar, trying to find pom inside!");// if the artifact is a jar, try to open the pom inside
           FileSystem jarFs = FileSystems.newFileSystem(artifact.getFile().toPath(), null);
           Path jarPom = jarFs.getPath(
                   "META-INF/maven/" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/pom.xml");
           if (Files.exists(jarPom)) {
-            getLog().info("File " + jarPom+" from inside jar will be used!");
+            getLog().debug("File " + jarPom + " from inside jar will be used!");
             reader = Files.newBufferedReader(jarPom);
           } else {
-            getLog().info("File " + jarPom + " not found!");
+            getLog().debug("File " + jarPom + " not found!");
           }
         }
       }
 
     } else {
-      getLog().info("File " + path + " will be used as pom!");
+      getLog().debug("File " + path + " will be used as pom!");
       reader = new BufferedReader(new FileReader(path));
     }
     if(reader==null) {
