@@ -5,12 +5,12 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- required to deploy to sonatype's nexus and get into central repo -->
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
-	</parent>
+	<!--&lt;!&ndash; required to deploy to sonatype's nexus and get into central repo &ndash;&gt;-->
+	<!--<parent>-->
+		<!--<groupId>org.sonatype.oss</groupId>-->
+		<!--<artifactId>oss-parent</artifactId>-->
+		<!--<version>7</version>-->
+	<!--</parent>-->
 
 	<groupId>at.know-center.mavenplugins</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
