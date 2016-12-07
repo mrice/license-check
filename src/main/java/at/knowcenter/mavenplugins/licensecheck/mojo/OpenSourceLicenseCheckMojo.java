@@ -213,13 +213,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
     getLog().info("");
     getLog().info("This plugin validates that the artifacts you're using have a");
-    getLog().info("license declared in the pom. It then tries to determine whether ");
-    getLog().info("the license is one of the Open Source Initiative (OSI) approved ");
-    getLog().info("licenses. If it can't find a match or if the license is on your ");
+    getLog().info("known license declared in the pom.");
+    getLog().info("If it can't find a match or if the license is on your");
     getLog().info("declared blacklist or not on your declared whitelist, then the build will fail.");
-    getLog().info("");
-    getLog().info("This plugin and its author are not associated with the OSI.");
-    getLog().info("Please send me feedback: me@michaelrice.com. Thanks!");
     getLog().info("");
     final Set<String> keys = licenses.keySet();
     getLog().info("--[ Licenses found ]------ ");
