@@ -314,36 +314,38 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
   @NotNull
   private String readPomContents(@NotNull final Artifact artifact) throws IOException, MojoFailureException {
+    FileSystem jarFs = null;
+    try {
 
-    final File artifactDirectory = artifact.getFile().getParentFile();
-    String path = artifactDirectory.getAbsolutePath();
-    path += "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".pom";
+      final File artifactDirectory = artifact.getFile().getParentFile();
+      String path = artifactDirectory.getAbsolutePath();
+      path += "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".pom";
 
 
-    final StringBuilder buffer = new StringBuilder();
-    BufferedReader reader = null;
+      final StringBuilder buffer = new StringBuilder();
+      BufferedReader reader = null;
 
-    //check if the file exists
-    File pathFile = new File(path);
-    if (!pathFile.exists()) {
-      getLog().debug("File " + pathFile + " not found!");
-      //read the pom from the jar
-      getLog().debug("File " + artifact.getFile() + " will be used instead!");
-      if (artifact.getFile().exists()) {
-        getLog().debug("File " + artifact.getFile() + " exists!");
-        if (artifact.getFile()
-                    .toString()
-                    .toLowerCase()
-                    .endsWith("pom.xml")) { // if the artifact itself is a pom, load it
-          getLog().debug("File " + artifact.getFile() + " is a pom, using that!");
-          reader = com.google.common.io.Files.newReader(artifact.getFile(), Charsets.UTF_8);
-        } else if (artifact.getFile()
-                           .toString()
-                           .toLowerCase()
-                           .endsWith(".jar")) {
-          getLog().debug(
-                  "File " + artifact.getFile() + " is a jar, trying to find pom inside!");// if the artifact is a jar, try to open the pom inside
-          try (FileSystem jarFs = FileSystems.newFileSystem(artifact.getFile().toPath(), null)) {
+      //check if the file exists
+      File pathFile = new File(path);
+      if (!pathFile.exists()) {
+        getLog().debug("File " + pathFile + " not found!");
+        //read the pom from the jar
+        getLog().debug("File " + artifact.getFile() + " will be used instead!");
+        if (artifact.getFile().exists()) {
+          getLog().debug("File " + artifact.getFile() + " exists!");
+          if (artifact.getFile()
+                      .toString()
+                      .toLowerCase()
+                      .endsWith("pom.xml")) { // if the artifact itself is a pom, load it
+            getLog().debug("File " + artifact.getFile() + " is a pom, using that!");
+            reader = com.google.common.io.Files.newReader(artifact.getFile(), Charsets.UTF_8);
+          } else if (artifact.getFile()
+                             .toString()
+                             .toLowerCase()
+                             .endsWith(".jar")) {
+            getLog().debug(
+                    "File " + artifact.getFile() + " is a jar, trying to find pom inside!");// if the artifact is a jar, try to open the pom inside
+            jarFs = FileSystems.newFileSystem(artifact.getFile().toPath(), null);
             Path jarPom = jarFs.getPath(
                     "META-INF/maven/" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/pom.xml");
             if (Files.exists(jarPom)) {
@@ -352,27 +354,32 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
             } else {
               getLog().debug("File " + jarPom + " not found!");
             }
+
           }
         }
+
+      } else {
+        getLog().debug("File " + path + " will be used as pom!");
+        reader = com.google.common.io.Files.newReader(pathFile, Charsets.UTF_8);
+      }
+      if (reader == null) {
+        throw new MojoFailureException("No pom file for artifact " + artifact.getFile() + " found!");
+      }
+      String line;
+      while ((line = reader.readLine()) != null) {
+        buffer.append(line);
       }
 
-    } else {
-      getLog().debug("File " + path + " will be used as pom!");
-      reader = com.google.common.io.Files.newReader(pathFile, Charsets.UTF_8);
+
+      reader.close();
+
+
+      return buffer.toString();
+    } finally {
+      if (jarFs != null) {
+        jarFs.close();
+      }
     }
-    if(reader==null) {
-      throw new MojoFailureException("No pom file for artifact "+artifact.getFile()+" found!");
-    }
-    String line;
-    while ((line = reader.readLine()) != null) {
-      buffer.append(line);
-    }
-
-
-    reader.close();
-
-
-    return buffer.toString();
   }
 
   /**
