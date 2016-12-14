@@ -45,6 +45,7 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.enterprise.inject.InjectionException;
 import java.io.*;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -70,38 +71,38 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
   private static final Locale LOCALE = Locale.ENGLISH;
 
+  @Component
+  private MavenProject project;
   /**
    * This is the repo system required by Aether
    *
    * For more, visit http://blog.sonatype.com/people/2011/01/how-to-use-aether-in-maven-plugins/
    */
   @Component
+  private
   RepositorySystem repoSystem;
-
-  @Nullable
-  @Component
-  final MavenProject project = null;
-
   /**
    * The current repository and network configuration of Maven
    *
    * For more, visit http://blog.sonatype.com/people/2011/01/how-to-use-aether-in-maven-plugins/
    *
-   * @readonly
    */
-  @Parameter(defaultValue = "${repositorySystemSession}")
+  @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
+  private
   RepositorySystemSession repoSession;
 
   /**
    * This is the project's remote repositories that can be used for resolving plugins and their dependencies
    */
   @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
+  private
   List<RemoteRepository> remoteRepos;
 
   /**
    * This is the maximum number of parents to search through (in case there's a malformed pom).
    */
   @Parameter(property = "os-check.recursion-limit", defaultValue = "12")
+  private
   int maxSearchDepth;
 
   /**
@@ -110,6 +111,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * &lt;/excludes&gt; &lt;/configuration&gt;
    */
   @Parameter(property = "os-check.excludes")
+  private
   String[] excludes;
 
   /**
@@ -118,9 +120,11 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * &lt;/excludesRegex&gt; &lt;/configuration&gt;
    */
   @Parameter(property = "os-check.excludesRegex")
+  private
   String[] excludesRegex;
 
   @Parameter(property = "os-check.excludesNoLicense")
+  private
   boolean excludeNoLicense;
 
   /**
@@ -129,6 +133,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * &lt;param&gt;gpl-3.0&lt;/param&gt; &lt;/blacklist&gt; &lt;/configuration&gt;
    */
   @Parameter(property = "os-check.blacklist")
+  private
   String[] blacklist;
 
   /**
@@ -137,6 +142,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * &lt;param&gt;gpl-3.0&lt;/param&gt; &lt;/blacklist&gt; &lt;/configuration&gt;
    */
   @Parameter(property = "os-check.whitelist")
+  private
   String[] whitelist;
 
   /**
@@ -145,15 +151,16 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * &lt;param&gt;provided&lt;/param&gt; &lt;/excludedScopes&gt; &lt;/configuration&gt;
    */
   @Parameter(property = "os-check.excludedScopes")
+  private
   String[] excludedScopes;
 
   /**
    * Used to hold the list of license descriptors. Generation is lazy on the first method call to use it.
    */
-  List<LicenseDescriptor> descriptors;
+  private List<LicenseDescriptor> descriptors;
 
-  public void execute() throws MojoExecutionException, MojoFailureException
-  {
+  @Override
+  public void execute() throws MojoExecutionException, MojoFailureException {
 
     getLog().info("------------------------------------------------------------------------");
     getLog().info("VALIDATING OPEN SOURCE LICENSES                                         ");
@@ -164,6 +171,10 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final Set<String> whitelistSet = getAsLowerCaseSet(whitelist);
     final Set<String> excludedScopesSet = getAsLowerCaseSet(excludedScopes);
     final List<Pattern> excludePatternList = getAsPatternList(excludesRegex);
+
+    if (project == null) {
+      throw new InjectionException("Maven Project not injected into Plugin!");
+    }
 
     final Set<Artifact> artifacts = project.getArtifacts();
     artifacts.addAll(project.getDependencyArtifacts());
@@ -188,9 +199,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
         String licenseName = "";
         try {
-            if (result != null) {
-                licenseName = recurseForLicenseName(RepositoryUtils.toArtifact(result.getArtifact()), 0);
-            }
+          if (result != null) {
+            licenseName = recurseForLicenseName(RepositoryUtils.toArtifact(result.getArtifact()), 0);
+          }
         } catch (IOException e) {
           getLog().error("Error reading license information", e);
         }
@@ -249,7 +260,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return target;
   }
 
-  @NotNull List<Pattern> getAsPatternList(@Nullable final String[] src)
+  @NotNull
+  private List<Pattern> getAsPatternList(@Nullable final String[] src)
   {
     final List<Pattern> target = new ArrayList<>();
     if (src != null) {
@@ -266,12 +278,14 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return target;
   }
 
-  @NotNull String toCoordinates(@NotNull final Artifact artifact)
+  @NotNull
+  private String toCoordinates(@NotNull final Artifact artifact)
   {
     return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
   }
 
-  @Nullable String recurseForLicenseName(@NotNull final Artifact artifact, final int currentDepth) throws IOException, MojoFailureException {
+  @Nullable
+  private String recurseForLicenseName(@NotNull final Artifact artifact, final int currentDepth) throws IOException, MojoFailureException {
 
     final String pom = readPomContents(artifact);
 
@@ -298,7 +312,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return licenseName;
   }
 
-  @NotNull String readPomContents(@NotNull final Artifact artifact) throws IOException, MojoFailureException {
+  @NotNull
+  private String readPomContents(@NotNull final Artifact artifact) throws IOException, MojoFailureException {
 
     final File artifactDirectory = artifact.getFile().getParentFile();
     String path = artifactDirectory.getAbsolutePath();
@@ -368,7 +383,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @return
    */
   // TODO make this more elegant and less brittle
-  @Nullable String extractLicenseName(@NotNull final String raw)
+  @Nullable
+  private String extractLicenseName(@NotNull final String raw)
   {
     final String licenseTagStart = "<license>", licenseTagStop = "</license>";
     final String nameTagStart = "<name>", nameTagStop = "</name>";
@@ -384,7 +400,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @return
    */
   // TODO obviously this code needs a lot of error protection and handling
-  @Nullable String extractParentCoords(@NotNull final String raw)
+  @Nullable
+  private String extractParentCoords(@NotNull final String raw)
   {
     final String parentTagStart = "<parent>", parentTagStop = "</parent>";
     final String groupTagStart = "<groupId>", groupTagStop = "</groupId>";
@@ -407,7 +424,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @param coordinates as in groupId:artifactId:version
    * @return the located artifact
    */
-  @Nullable Artifact retrieveArtifact(final String coordinates)
+  @Nullable
+  private Artifact retrieveArtifact(final String coordinates)
   {
 
     final ArtifactRequest request = new ArtifactRequest();
@@ -442,7 +460,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @param licenseName
    * @return
    */
-  @Nullable String convertLicenseNameToCode(@Nullable final String licenseName)
+  @Nullable
+  private String convertLicenseNameToCode(@Nullable final String licenseName)
   {
     if (licenseName == null) {
       return null;
@@ -467,7 +486,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * take advantage of improvements in what we know and what we learn.
    */
   // TODO I know, I know... this is really raw... will make it prettier
-  void loadDescriptors()
+  private void loadDescriptors()
   {
 
     final String licensesPath = "/licenses.txt";
@@ -514,14 +533,14 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @param artifact
    * @return
    */
-  boolean artifactIsOnExcludeList(final Set<String> excludeSet, @NotNull final List<Pattern> patternList,
-                                  @NotNull final Set<String> excludedScopes, @NotNull final Artifact artifact)
+  private boolean artifactIsOnExcludeList(final Set<String> excludeSet, @NotNull final List<Pattern> patternList,
+                                          @NotNull final Set<String> excludedScopes, @NotNull final Artifact artifact)
   {
     return isExcludedTemplate(excludeSet, patternList, toCoordinates(artifact)) || excludedScopes.contains(artifact.getScope());
   }
 
-  boolean isExcludedTemplate(final Set<String> excludeSet, @NotNull final List<Pattern> patternList,
-                             @NotNull final String template)
+  private boolean isExcludedTemplate(final Set<String> excludeSet, @NotNull final List<Pattern> patternList,
+                                     @NotNull final String template)
   {
     if (isContained(excludeSet, template)) {
       return true;
@@ -534,7 +553,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return false;
   }
 
-  boolean isContained(@Nullable final Set<String> set, @Nullable final String template) {
+  private boolean isContained(@Nullable final Set<String> set, @Nullable final String template) {
     return set != null && template != null && set.contains(template.toLowerCase(LOCALE));
   }
 
