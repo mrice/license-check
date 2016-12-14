@@ -53,6 +53,8 @@
 	</developers>
 
 	<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.version>3.1.1</maven.version>
 		<maven.test-plugin.version>3.1.0</maven.test-plugin.version>
 		<maven.plugin.version>3.4</maven.plugin.version>
