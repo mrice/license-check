@@ -12,7 +12,7 @@
 
 	<groupId>at.know-center.mavenplugins</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.5.6-SNAPSHOT</version>
+	<version>0.5.6</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>License Check Plugin</name>
@@ -24,7 +24,7 @@
 		<url>https://git.know-center.tugraz.at/summary/?r=license-check.git</url>
 		<connection>scm:git:ssh://jenkins@git.know-center.tugraz.at:29418/license-check.git</connection>
 		<developerConnection>scm:git:ssh://git.know-center.tugraz.at:29418/license-check.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>license-check-maven-plugin-0.5.6</tag>
   </scm>
 
 	<licenses>
