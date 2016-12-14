@@ -24,6 +24,7 @@ THE SOFTWARE.
 package at.knowcenter.mavenplugins.licensecheck.mojo;
 
 import at.knowcenter.mavenplugins.licensecheck.model.LicenseDescriptor;
+import com.google.common.base.Charsets;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -41,6 +42,8 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.file.FileSystem;
@@ -75,6 +78,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
   @Component
   RepositorySystem repoSystem;
 
+  @Nullable
   @Component
   final MavenProject project = null;
 
@@ -165,7 +169,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     artifacts.addAll(project.getDependencyArtifacts());
     getLog().info("Validating licenses for " + artifacts.size() + " artifact(s)");
 
-    final Map<String, String> licenses = new HashMap<String, String>();
+    final Map<String, String> licenses = new HashMap<>();
 
     boolean buildFails = false;
     for (final Artifact artifact : artifacts) {
@@ -178,7 +182,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
         try {
           result = repoSystem.resolveArtifact(repoSession, request);
           getLog().info(result.toString());
-        } catch (final ArtifactResolutionException e) {
+        } catch (@NotNull final ArtifactResolutionException e) {
           // TODO: figure out how to deal with this one
         }
 
@@ -217,10 +221,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     getLog().info("If it can't find a match or if the license is on your");
     getLog().info("declared blacklist or not on your declared whitelist, then the build will fail.");
     getLog().info("");
-    final Set<String> keys = licenses.keySet();
     getLog().info("--[ Licenses found ]------ ");
-    for (final String artifact : keys) {
-      getLog().info("\t" + artifact + ": " + licenses.get(artifact));
+    for (final Map.Entry<String, String> artifact : licenses.entrySet()) {
+      getLog().info("\t" + artifact.getKey() + ": " + artifact.getValue());
     }
 
     if (buildFails) {
@@ -235,9 +238,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
   }
 
-  Set<String> getAsLowerCaseSet(final String[] src)
+  @NotNull Set<String> getAsLowerCaseSet(@Nullable final String[] src)
   {
-    final Set<String> target = new HashSet<String>();
+    final Set<String> target = new HashSet<>();
     if (src != null) {
       for (final String s : src) {
         target.add(s.toLowerCase(LOCALE));
@@ -246,15 +249,15 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return target;
   }
 
-  List<Pattern> getAsPatternList(final String[] src)
+  @NotNull List<Pattern> getAsPatternList(@Nullable final String[] src)
   {
-    final List<Pattern> target = new ArrayList<Pattern>();
+    final List<Pattern> target = new ArrayList<>();
     if (src != null) {
       for (final String s : src) {
         try {
           final Pattern pattern = Pattern.compile(s);
           target.add(pattern);
-        } catch (final PatternSyntaxException e) {
+        } catch (@NotNull final PatternSyntaxException e) {
           getLog().warn("The regex " + s + " is invalid: " + e.getLocalizedMessage());
         }
 
@@ -263,12 +266,12 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return target;
   }
 
-  String toCoordinates(final Artifact artifact)
+  @NotNull String toCoordinates(@NotNull final Artifact artifact)
   {
     return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
   }
 
-  String recurseForLicenseName(final Artifact artifact, final int currentDepth) throws IOException, MojoFailureException {
+  @Nullable String recurseForLicenseName(@NotNull final Artifact artifact, final int currentDepth) throws IOException, MojoFailureException {
 
     final String pom = readPomContents(artifact);
 
@@ -295,7 +298,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return licenseName;
   }
 
-  String readPomContents(final Artifact artifact) throws IOException, MojoFailureException {
+  @NotNull String readPomContents(@NotNull final Artifact artifact) throws IOException, MojoFailureException {
 
     final File artifactDirectory = artifact.getFile().getParentFile();
     String path = artifactDirectory.getAbsolutePath();
@@ -318,7 +321,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
                     .toLowerCase()
                     .endsWith("pom.xml")) { // if the artifact itself is a pom, load it
           getLog().debug("File " + artifact.getFile() + " is a pom, using that!");
-          reader = new BufferedReader(new FileReader(artifact.getFile()));
+          reader = com.google.common.io.Files.newReader(artifact.getFile(), Charsets.UTF_8);
         } else if (artifact.getFile()
                            .toString()
                            .toLowerCase()
@@ -340,12 +343,12 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
     } else {
       getLog().debug("File " + path + " will be used as pom!");
-      reader = new BufferedReader(new FileReader(path));
+      reader = com.google.common.io.Files.newReader(pathFile, Charsets.UTF_8);
     }
     if(reader==null) {
       throw new MojoFailureException("No pom file for artifact "+artifact.getFile()+" found!");
     }
-    String line = null;
+    String line;
     while ((line = reader.readLine()) != null) {
       buffer.append(line);
     }
@@ -365,11 +368,11 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @return
    */
   // TODO make this more elegant and less brittle
-  String extractLicenseName(final String raw)
+  @Nullable String extractLicenseName(@NotNull final String raw)
   {
     final String licenseTagStart = "<license>", licenseTagStop = "</license>";
     final String nameTagStart = "<name>", nameTagStop = "</name>";
-    if (raw.indexOf(licenseTagStart) != -1) {
+    if (raw.contains(licenseTagStart)) {
       final String licenseContents = raw.substring(raw.indexOf(licenseTagStart) + licenseTagStart.length(), raw.indexOf(licenseTagStop));
       return licenseContents.substring(licenseContents.indexOf(nameTagStart) + nameTagStart.length(), licenseContents.indexOf(nameTagStop));
     }
@@ -381,14 +384,14 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @return
    */
   // TODO obviously this code needs a lot of error protection and handling
-  String extractParentCoords(final String raw)
+  @Nullable String extractParentCoords(@NotNull final String raw)
   {
     final String parentTagStart = "<parent>", parentTagStop = "</parent>";
     final String groupTagStart = "<groupId>", groupTagStop = "</groupId>";
     final String artifactTagStart = "<artifactId>", artifactTagStop = "</artifactId>";
     final String versionTagStart = "<version>", versionTagStop = "</version>";
 
-    if (raw.indexOf(parentTagStart) == -1) {
+    if (!raw.contains(parentTagStart)) {
       return null;
     }
     final String contents = raw.substring(raw.indexOf(parentTagStart) + parentTagStart.length(), raw.indexOf(parentTagStop));
@@ -404,7 +407,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @param coordinates as in groupId:artifactId:version
    * @return the located artifact
    */
-  Artifact retrieveArtifact(final String coordinates)
+  @Nullable Artifact retrieveArtifact(final String coordinates)
   {
 
     final ArtifactRequest request = new ArtifactRequest();
@@ -414,14 +417,14 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     ArtifactResult result = null;
     try {
       result = repoSystem.resolveArtifact(repoSession, request);
-    } catch (final ArtifactResolutionException e) {
+    } catch (@NotNull final ArtifactResolutionException e) {
             try {
               //if the artifact jar is not found, retry the request for the pom instead of the jar
                 org.eclipse.aether.artifact.Artifact art = request.getArtifact();
                 request
                     .setArtifact(new DefaultArtifact(art.getGroupId(), art.getArtifactId(), "pom", art.getVersion()));
                 result = repoSystem.resolveArtifact(repoSession, request);
-            } catch (final ArtifactResolutionException ex) {
+            } catch (@NotNull final ArtifactResolutionException ex) {
                 getLog().error("Could not resolve parent artifact (" + coordinates + "): " + ex.getMessage());
             }
     }
@@ -439,7 +442,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @param licenseName
    * @return
    */
-  String convertLicenseNameToCode(final String licenseName)
+  @Nullable String convertLicenseNameToCode(@Nullable final String licenseName)
   {
     if (licenseName == null) {
       return null;
@@ -470,22 +473,22 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final String licensesPath = "/licenses.txt";
     final InputStream is = getClass().getResourceAsStream(licensesPath);
     BufferedReader reader = null;
-    descriptors = new ArrayList<LicenseDescriptor>();
+    descriptors = new ArrayList<>();
     final StringBuilder buffer = new StringBuilder();
     try {
-      reader = new BufferedReader(new InputStreamReader(is));
-      String line = null;
+      reader = new BufferedReader(new InputStreamReader(is, Charsets.UTF_8));
+      String line;
       while ((line = reader.readLine()) != null) {
-        buffer.append(line + "\n");
+        buffer.append(line).append("\n");
       }
-    } catch (final Exception e) {
+    } catch (@NotNull final Exception e) {
       getLog().error(e);
     } finally {
       try {
         if ( reader != null){
         	reader.close();
         }
-      } catch (final IOException e) {
+      } catch (@NotNull final IOException e) {
         // TODO
         e.printStackTrace();
       }
@@ -511,14 +514,14 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
    * @param artifact
    * @return
    */
-  boolean artifactIsOnExcludeList(final Set<String> excludeSet, final List<Pattern> patternList,
-      final Set<String> excludedScopes, final Artifact artifact)
+  boolean artifactIsOnExcludeList(final Set<String> excludeSet, @NotNull final List<Pattern> patternList,
+                                  @NotNull final Set<String> excludedScopes, @NotNull final Artifact artifact)
   {
     return isExcludedTemplate(excludeSet, patternList, toCoordinates(artifact)) || excludedScopes.contains(artifact.getScope());
   }
 
-  boolean isExcludedTemplate(final Set<String> excludeSet, final List<Pattern> patternList,
-      final String template)
+  boolean isExcludedTemplate(final Set<String> excludeSet, @NotNull final List<Pattern> patternList,
+                             @NotNull final String template)
   {
     if (isContained(excludeSet, template)) {
       return true;
@@ -531,12 +534,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return false;
   }
 
-  boolean isContained(final Set<String> set, final String template)
-  {
-    if (set != null && template != null) {
-      return set.contains(template.toLowerCase(LOCALE));
-    }
-    return false;
+  boolean isContained(@Nullable final Set<String> set, @Nullable final String template) {
+    return set != null && template != null && set.contains(template.toLowerCase(LOCALE));
   }
 
 }
