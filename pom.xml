@@ -22,8 +22,8 @@
 
 	<scm>
 		<url>https://git.know-center.tugraz.at/summary/?r=license-check.git</url>
-		<connection>scm:git:ssh://jschneider@git.know-center.tugraz.at:29418/license-check.git</connection>
-		<developerConnection>scm:git:ssh://jschneider@git.know-center.tugraz.at:29418/license-check.git</developerConnection>
+		<connection>scm:git:ssh://jenkins@git.know-center.tugraz.at:29418/license-check.git</connection>
+		<developerConnection>scm:git:ssh://git.know-center.tugraz.at:29418/license-check.git</developerConnection>
 	  <tag>HEAD</tag>
   </scm>
 
