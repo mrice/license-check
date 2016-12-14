@@ -325,14 +325,15 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
                            .endsWith(".jar")) {
           getLog().debug(
                   "File " + artifact.getFile() + " is a jar, trying to find pom inside!");// if the artifact is a jar, try to open the pom inside
-          FileSystem jarFs = FileSystems.newFileSystem(artifact.getFile().toPath(), null);
-          Path jarPom = jarFs.getPath(
-                  "META-INF/maven/" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/pom.xml");
-          if (Files.exists(jarPom)) {
-            getLog().debug("File " + jarPom + " from inside jar will be used!");
-            reader = Files.newBufferedReader(jarPom);
-          } else {
-            getLog().debug("File " + jarPom + " not found!");
+          try (FileSystem jarFs = FileSystems.newFileSystem(artifact.getFile().toPath(), null)) {
+            Path jarPom = jarFs.getPath(
+                    "META-INF/maven/" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/pom.xml");
+            if (Files.exists(jarPom)) {
+              getLog().debug("File " + jarPom + " from inside jar will be used!");
+              reader = Files.newBufferedReader(jarPom);
+            } else {
+              getLog().debug("File " + jarPom + " not found!");
+            }
           }
         }
       }
