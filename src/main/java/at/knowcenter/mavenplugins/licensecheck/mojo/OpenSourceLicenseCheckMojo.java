@@ -53,7 +53,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -160,7 +159,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     /**
      * Used to hold the list of license descriptors. Generation is lazy on the first method call to use it.
      */
-    private List<LicenseDescriptor> descriptors;
+    private Set<LicenseDescriptor> descriptors;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -488,15 +487,13 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
         if (descriptors == null) {
             loadDescriptors();
         }
-        for (final LicenseDescriptor descriptor : descriptors) {
-            // TODO there's gotta be a faster way to do this
-            final Pattern pattern = Pattern.compile(descriptor.getRegex(), Pattern.CASE_INSENSITIVE);
-            final Matcher matcher = pattern.matcher(licenseName);
-            if (matcher.find()) {
-                return descriptor.getCode();
-            }
-        }
-        return null;
+        return descriptors.stream()
+                          .sequential()
+                          .filter(licenseDescriptor -> licenseDescriptor.getMatcher(licenseName).find())
+                          .findFirst()
+                          .map(
+                                  LicenseDescriptor::getCode)
+                          .orElse(null);
     }
 
     /**
@@ -509,7 +506,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
         final String licensesPath = "/licenses.txt";
         final InputStream is = getClass().getResourceAsStream(licensesPath);
-        descriptors = new ArrayList<>();
+        descriptors = new HashSet<>();
         final StringBuilder buffer = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charsets.UTF_8))) {
             String line;
@@ -523,10 +520,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
         final String[] lines = buffer.toString().split("\n");
         for (final String line : lines) {
             final String[] columns = line.split("\\t");
-            final LicenseDescriptor descriptor = new LicenseDescriptor();
-            descriptor.setCode(columns[LICENSE_CODE_COLUMN]);
-            descriptor.setLicenseName(columns[LICENSE_NAME_COLUMN]);
-            descriptor.setRegex(columns[LICENSE_REGEX_COLUMN]);
+            final LicenseDescriptor descriptor = new LicenseDescriptor(columns[LICENSE_CODE_COLUMN],
+                                                                       columns[LICENSE_NAME_COLUMN],
+                                                                       columns[LICENSE_REGEX_COLUMN]);
             descriptors.add(descriptor);
         }
     }

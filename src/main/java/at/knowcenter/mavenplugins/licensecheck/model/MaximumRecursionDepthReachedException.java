@@ -2,8 +2,6 @@ package at.knowcenter.mavenplugins.licensecheck.model;
 
 import org.apache.maven.plugin.MojoFailureException;
 
-import java.security.PrivilegedActionException;
-
 /**
  * Created by jschneider on 13.09.17.
  *
