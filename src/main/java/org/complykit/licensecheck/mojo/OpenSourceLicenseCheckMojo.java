@@ -308,10 +308,14 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
   String readPomContents(final String path) throws IOException
   {
 
+    File pomFile = new File(path);
+    if(!pomFile.exists()){
+      return "";
+    }
     final StringBuffer buffer = new StringBuffer();
     BufferedReader reader = null;
 
-    reader = new BufferedReader(new FileReader(path));
+    reader = new BufferedReader(new FileReader(pomFile));
 
     String line = null;
 
