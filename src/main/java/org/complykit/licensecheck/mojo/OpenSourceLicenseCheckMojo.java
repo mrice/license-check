@@ -200,7 +200,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
           getLog().error("Error parsing maven model", e);
         }
         String code = convertLicenseNameToCode(licenseName);
-        if (code == null) {
+        if (code == null || code.equals("")) {
           if (excludeNoLicense==false) {
             buildFails = true;
             getLog().warn("Build will fail because of artifact '" + toCoordinates(artifact) + "' and license'" + licenseName + "'.");
@@ -292,7 +292,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
     // first, look for a license
     String licenseName = extractLicenseName(model);
-    if (licenseName == null) {
+    if (licenseName == null || licenseName.equalsIgnoreCase("")) {
       final Parent parentArtifactCoords = model.getParent();
       if (parentArtifactCoords != null) {
         // search for the artifact

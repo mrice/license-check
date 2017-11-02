@@ -26,4 +26,10 @@ public class OpenSourceLicenseCheckMojoTest {
         assertTrue(result.containsAll(expected));
     }
 
+    @Test
+    public void testConvertLicenseNameToCode(){
+        OpenSourceLicenseCheckMojo mojo = new OpenSourceLicenseCheckMojo();
+        assertEquals("apache-2.0",mojo.convertLicenseNameToCode("Apache License 2.0"));
+    }
+
 }
