@@ -1,10 +1,14 @@
 package org.complykit.licensecheck.mojo;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class OpenSourceLicenseCheckMojoTest {

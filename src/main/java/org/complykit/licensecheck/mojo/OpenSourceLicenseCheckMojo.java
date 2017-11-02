@@ -41,6 +41,10 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.License;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -48,6 +52,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.complykit.licensecheck.model.LicenseDescriptor;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -169,7 +174,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final Set<Artifact> artifacts = project.getDependencyArtifacts();
     getLog().info("Validating licenses for " + artifacts.size() + " artifact(s)");
 
-    final Map<String, String> licenses = new HashMap<String, String>();
+    final Map<Artifact, String> licenses = new HashMap<Artifact, String>();
 
     boolean buildFails = false;
     for (final Artifact artifact : artifacts) {
@@ -191,6 +196,8 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
           licenseName = recurseForLicenseName(RepositoryUtils.toArtifact(result.getArtifact()), 0);
         } catch (IOException e) {
           getLog().error("Error reading license information", e);
+        } catch (XmlPullParserException e) {
+          getLog().error("Error parsing maven model", e);
         }
         String code = convertLicenseNameToCode(licenseName);
         if (code == null) {
@@ -205,9 +212,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
           buildFails = true;
           code += " IS NOT ON YOUR WHITELIST";
         }
-        licenses.put(artifact.getArtifactId(), code);
+        licenses.put(artifact, code);
       } else {
-        licenses.put(artifact.getArtifactId(), "SKIPPED because artifact is on your exclude list");
+        licenses.put(artifact, "SKIPPED because artifact is on your exclude list");
       }
 
     }
@@ -222,10 +229,10 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     getLog().info("This plugin and its author are not associated with the OSI.");
     getLog().info("Please send me feedback: me@michaelrice.com. Thanks!");
     getLog().info("");
-    final Set<String> keys = licenses.keySet();
+    final Set<Artifact> keys = licenses.keySet();
     getLog().info("--[ Licenses found ]------ ");
-    for (final String artifact : keys) {
-      getLog().info("\t" + artifact + ": " + licenses.get(artifact));
+    for (final Artifact artifact : keys) {
+      getLog().info("\t" + artifact.getArtifactId() + ":" +artifact.getVersion()+ ": " + licenses.get(artifact));
     }
 
     if (buildFails) {
@@ -273,19 +280,20 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
   }
 
-  String recurseForLicenseName(final Artifact artifact, final int currentDepth) throws IOException
-  {
+  String recurseForLicenseName(final Artifact artifact, final int currentDepth) throws IOException, XmlPullParserException {
 
     final File artifactDirectory = artifact.getFile().getParentFile();
-    String directoryPath = artifactDirectory.getAbsolutePath();
-    directoryPath += "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".pom";
+    File pomFile = new File(artifactDirectory.getAbsolutePath(), artifact.getArtifactId() + "-" + artifact.getVersion() + ".pom");
 
-    final String pom = readPomContents(directoryPath);
+    final Model model = readPomContents(pomFile);
+    if(model == null){
+      return null;
+    }
 
     // first, look for a license
-    String licenseName = extractLicenseName(pom);
+    String licenseName = extractLicenseName(model);
     if (licenseName == null) {
-      final String parentArtifactCoords = extractParentCoords(pom);
+      final Parent parentArtifactCoords = model.getParent();
       if (parentArtifactCoords != null) {
         // search for the artifact
         final Artifact parent = retrieveArtifact(parentArtifactCoords);
@@ -305,91 +313,51 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     return licenseName;
   }
 
-  String readPomContents(final String path) throws IOException
-  {
-
-    File pomFile = new File(path);
+  Model readPomContents(final File pomFile) throws IOException, XmlPullParserException {
     if(!pomFile.exists()){
-      return "";
+      return null;
     }
-    final StringBuffer buffer = new StringBuffer();
-    BufferedReader reader = null;
-
-    reader = new BufferedReader(new FileReader(pomFile));
-
-    String line = null;
-
-    while ((line = reader.readLine()) != null) {
-      buffer.append(line);
-    }
-
-
+    MavenXpp3Reader modelReader = new MavenXpp3Reader();
+    BufferedReader reader = new BufferedReader(new FileReader(pomFile));
+    Model model = modelReader.read(reader);
     reader.close();
-
-
-    return buffer.toString();
+    return model;
   }
 
   /**
    * This function looks for the license textual description. I didn't really want to parse the pom xml since we're
    * just looking for one little snippet of the content.
    *
-   * @param raw
+   * @param model
    * @return
    */
   // TODO make this more elegant and less brittle
-  String extractLicenseName(final String raw)
+  String extractLicenseName(final Model model)
   {
-    final String licenseTagStart = "<license>", licenseTagStop = "</license>";
-    final String nameTagStart = "<name>", nameTagStop = "</name>";
-    if (raw.indexOf(licenseTagStart) != -1) {
-      final String licenseContents = raw.substring(raw.indexOf(licenseTagStart) + licenseTagStart.length(), raw.indexOf(licenseTagStop));
-      final String name = licenseContents.substring(licenseContents.indexOf(nameTagStart) + nameTagStart.length(), licenseContents.indexOf(nameTagStop));
-      return name;
-    }
-    return null;
-  }
-
-  /**
-   * @param raw
-   * @return
-   */
-  // TODO obviously this code needs a lot of error protection and handling
-  String extractParentCoords(final String raw)
-  {
-    final String parentTagStart = "<parent>", parentTagStop = "</parent>";
-    final String groupTagStart = "<groupId>", groupTagStop = "</groupId>";
-    final String artifactTagStart = "<artifactId>", artifactTagStop = "</artifactId>";
-    final String versionTagStart = "<version>", versionTagStop = "</version>";
-
-    if (raw.indexOf(parentTagStart) == -1) {
+    List<License> licenses = model.getLicenses();
+    if(licenses == null || licenses.isEmpty()){
       return null;
     }
-    final String contents = raw.substring(raw.indexOf(parentTagStart) + parentTagStart.length(), raw.indexOf(parentTagStop));
-    final String group = contents.substring(contents.indexOf(groupTagStart) + groupTagStart.length(), contents.indexOf(groupTagStop));
-    final String artifact = contents.substring(contents.indexOf(artifactTagStart) + artifactTagStart.length(), contents.indexOf(artifactTagStop));
-    final String version = contents.substring(contents.indexOf(versionTagStart) + versionTagStart.length(), contents.indexOf(versionTagStop));
-    return group + ":" + artifact + ":" + version;
+    else return licenses.get(0).getName();
   }
 
   /**
    * Uses Aether to retrieve an artifact from the repository.
    *
-   * @param coordinates as in groupId:artifactId:version
+   * @param parent
    * @return the located artifact
    */
-  Artifact retrieveArtifact(final String coordinates)
+  Artifact retrieveArtifact(final Parent parent)
   {
-
     final ArtifactRequest request = new ArtifactRequest();
-    request.setArtifact(new DefaultArtifact(coordinates));
+    request.setArtifact(new DefaultArtifact(parent.getGroupId(),parent.getArtifactId(),"pom",parent.getVersion()));
     request.setRepositories(remoteRepos);
 
     ArtifactResult result = null;
     try {
       result = repoSystem.resolveArtifact(repoSession, request);
     } catch (final ArtifactResolutionException e) {
-      getLog().error("Could not resolve parent artifact (" + coordinates + "): " + e.getMessage());
+      getLog().error("Could not resolve parent artifact (" + parent.getId() + "): " + e.getMessage());
     }
 
     if (result != null) {
