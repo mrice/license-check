@@ -25,7 +25,6 @@ package at.knowcenter.mavenplugins.licensecheck.mojo;
 
 import at.knowcenter.mavenplugins.licensecheck.model.LicenseDescriptor;
 import at.knowcenter.mavenplugins.licensecheck.model.MaximumRecursionDepthReachedException;
-import com.google.common.base.Charsets;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -55,6 +54,10 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+
+import static com.google.common.io.Files.newReader;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * This plugin uses Aether to cruise through the dependencies in the project, find the related pom files,
@@ -168,11 +171,11 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
         getLog().info("VALIDATING OPEN SOURCE LICENSES                                         ");
         getLog().info("------------------------------------------------------------------------");
 
-        final Set<String> excludeSet = getAsLowerCaseSet(excludes);
-        final Set<String> blacklistSet = getAsLowerCaseSet(blacklist);
-        final Set<String> whitelistSet = getAsLowerCaseSet(whitelist);
-        final Set<String> excludedScopesSet = getAsLowerCaseSet(excludedScopes);
-        final List<Pattern> excludePatternList = getAsPatternList(excludesRegex);
+        final Set<String> excludeSet = getAsLowerCaseSetWithoutNull(excludes);
+        final Set<String> blacklistSet = getAsLowerCaseSetWithoutNull(blacklist);
+        final Set<String> whitelistSet = getAsLowerCaseSetWithoutNull(whitelist);
+        final Set<String> excludedScopesSet = getAsLowerCaseSetWithoutNull(excludedScopes);
+        final Set<Pattern> excludePatternSet = getAsPatternSet(excludesRegex);
 
         if (project == null) {
             throw new InjectionException("Maven Project not injected into Plugin!");
@@ -186,7 +189,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
         boolean buildFails = false;
         for (final Artifact artifact : artifacts) {
-            if (!artifactIsOnExcludeList(excludeSet, excludePatternList, excludedScopesSet, artifact)) {
+            if (!artifactIsOnExcludeList(excludeSet, excludePatternSet, excludedScopesSet, artifact)) {
                 final ArtifactRequest request = new ArtifactRequest();
                 request.setArtifact(RepositoryUtils.toArtifact(artifact));
                 request.setRepositories(remoteRepos);
@@ -253,31 +256,31 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
     }
 
-    @NotNull Set<String> getAsLowerCaseSet(@Nullable final String[] src) {
-        final Set<String> target = new HashSet<>();
-        if (src != null) {
-            for (final String s : src) {
-                target.add(s.toLowerCase(LOCALE));
-            }
+    @NotNull Set<String> getAsLowerCaseSetWithoutNull(@Nullable final String[] src) {
+        return Arrays.stream(src != null ? src : new String[0])
+                     .filter(Objects::nonNull)
+                     .map(s -> s.toLowerCase(LOCALE))
+                     .collect(Collectors.toSet());
+    }
+
+    @Nullable
+    private Pattern compilePattern(@NotNull String pattern) {
+        try {
+            return Pattern.compile(pattern);
+        } catch (@NotNull final PatternSyntaxException e) {
+            getLog().warn("The regex " + pattern + " is invalid: ", e);
         }
-        return target;
+        return null;
+
     }
 
     @NotNull
-    private List<Pattern> getAsPatternList(@Nullable final String[] src) {
-        final List<Pattern> target = new ArrayList<>();
-        if (src != null) {
-            for (final String s : src) {
-                try {
-                    final Pattern pattern = Pattern.compile(s);
-                    target.add(pattern);
-                } catch (@NotNull final PatternSyntaxException e) {
-                    getLog().warn("The regex " + s + " is invalid: ", e);
-                }
-
-            }
-        }
-        return target;
+    private Set<Pattern> getAsPatternSet(@Nullable final String[] src) {
+        return Arrays.stream(src != null ? src : new String[0])
+                     .filter(Objects::nonNull)
+                     .map(this::compilePattern)
+                     .filter(Objects::nonNull)
+                     .collect(Collectors.toSet());
     }
 
     @NotNull
@@ -342,14 +345,15 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
                                 .toLowerCase()
                                 .endsWith("pom.xml")) { // if the artifact itself is a pom, load it
                         getLog().debug(String.format("File %s is a pom, using that!", artifact.getFile()));
-                        reader = com.google.common.io.Files.newReader(artifact.getFile(), Charsets.UTF_8);
+                        reader = newReader(artifact.getFile(), UTF_8);
                     } else if (artifact.getFile()
                                        .toString()
                                        .toLowerCase()
                                        .endsWith(".jar")) {
                         getLog().debug(
                                 String.format("File %s is a jar, trying to find pom inside!",
-                                              artifact.getFile()));// if the artifact is a jar, try to open the pom inside
+                                              artifact.getFile()));
+                        // if the artifact is a jar, try to open the pom inside
                         jarFs = FileSystems.newFileSystem(artifact.getFile().toPath(), null);
                         Path jarPom = jarFs.getPath(
                                 String.format("META-INF/maven/%s/%s/pom.xml", artifact.getGroupId(),
@@ -366,7 +370,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
             } else {
                 getLog().debug(String.format("File %s will be used as pom!", path));
-                reader = com.google.common.io.Files.newReader(pathFile, Charsets.UTF_8);
+                reader = newReader(pathFile, UTF_8);
             }
             if (reader == null) {
                 throw new MojoFailureException(String.format("No pom file for artifact %s found!", artifact.getFile()));
@@ -508,7 +512,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
         final InputStream is = getClass().getResourceAsStream(licensesPath);
         descriptors = new ArrayList<>();
         final StringBuilder buffer = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 buffer.append(line).append("\n");
@@ -531,24 +535,24 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
      * Checks to see if an artifact is on the user's exclude list
      *
      * @param excludeSet
-     * @param patternList
+     * @param patternSet
      * @param excludedScopes
      * @param artifact
      * @return
      */
-    private boolean artifactIsOnExcludeList(final Set<String> excludeSet, @NotNull final List<Pattern> patternList,
+    private boolean artifactIsOnExcludeList(final Set<String> excludeSet, @NotNull final Set<Pattern> patternSet,
                                             @NotNull final Set<String> excludedScopes,
                                             @NotNull final Artifact artifact) {
-        return isExcludedTemplate(excludeSet, patternList, toCoordinates(artifact)) || excludedScopes.contains(
-                artifact.getScope());
+        return excludedScopes.contains(artifact.getScope()) || isExcludedTemplate(excludeSet, patternSet,
+                                                                                  toCoordinates(artifact));
     }
 
-    private boolean isExcludedTemplate(final Set<String> excludeSet, @NotNull final List<Pattern> patternList,
+    private boolean isExcludedTemplate(final Set<String> excludeSet, @NotNull final Set<Pattern> patternSet,
                                        @NotNull final String template) {
         if (isContained(excludeSet, template)) {
             return true;
         }
-        for (final Pattern pattern : patternList) {
+        for (final Pattern pattern : patternSet) {
             if (pattern.matcher(template).matches()) {
                 return true;
             }
