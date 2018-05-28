@@ -159,7 +159,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     /**
      * Used to hold the list of license descriptors. Generation is lazy on the first method call to use it.
      */
-    private Set<LicenseDescriptor> descriptors;
+    private List<LicenseDescriptor> descriptors;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -506,7 +506,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
         final String licensesPath = "/licenses.txt";
         final InputStream is = getClass().getResourceAsStream(licensesPath);
-        descriptors = new HashSet<>();
+        descriptors = new ArrayList<>();
         final StringBuilder buffer = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charsets.UTF_8))) {
             String line;
