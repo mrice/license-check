@@ -12,7 +12,7 @@
 
 	<groupId>at.know-center.mavenplugins</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.5.12</version>
+	<version>0.5.13-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>License Check Plugin</name>
