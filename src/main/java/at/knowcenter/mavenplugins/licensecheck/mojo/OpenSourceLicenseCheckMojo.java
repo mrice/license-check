@@ -164,6 +164,10 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
      */
     private List<LicenseDescriptor> descriptors;
 
+    private static String lowerCaseString(String s) {
+        return s.toLowerCase(LOCALE);
+    }
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -259,7 +263,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     @NotNull Set<String> getAsLowerCaseSetWithoutNull(@Nullable final String[] src) {
         return Arrays.stream(src != null ? src : new String[0])
                      .filter(Objects::nonNull)
-                     .map(s -> s.toLowerCase(LOCALE))
+                     .map(OpenSourceLicenseCheckMojo::lowerCaseString)
                      .collect(Collectors.toSet());
     }
 
@@ -276,8 +280,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
 
     @NotNull
     private Set<Pattern> getAsPatternSet(@Nullable final String[] src) {
-        return Arrays.stream(src != null ? src : new String[0])
+        return Arrays.stream(src != null ? src : new String[0]).unordered()
                      .filter(Objects::nonNull)
+                     .distinct()
                      .map(this::compilePattern)
                      .filter(Objects::nonNull)
                      .collect(Collectors.toSet());
@@ -495,8 +500,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
                           .sequential()
                           .filter(licenseDescriptor -> licenseDescriptor.getMatcher(licenseName).find())
                           .findFirst()
-                          .map(
-                                  LicenseDescriptor::getCode)
+                          .map(LicenseDescriptor::getCode)
                           .orElse(null);
     }
 
@@ -561,7 +565,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
     }
 
     private boolean isContained(@Nullable final Set<String> set, @Nullable final String template) {
-        return set != null && template != null && set.contains(template.toLowerCase(LOCALE));
+        return set != null && template != null && set.contains(lowerCaseString(template));
     }
 
 }

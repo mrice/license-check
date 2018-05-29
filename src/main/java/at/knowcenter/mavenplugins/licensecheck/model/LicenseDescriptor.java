@@ -1,5 +1,7 @@
 package at.knowcenter.mavenplugins.licensecheck.model;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,12 +10,13 @@ public class LicenseDescriptor {
     private final String code;
     private final String licenseName;
     private final String regex;
-    private Pattern regexCompiled;
+    private final Pattern regexCompiled;
 
     public LicenseDescriptor(String code, String licenseName, String regex) {
         this.code = code;
         this.licenseName = licenseName;
         this.regex = regex;
+        this.regexCompiled = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
     }
 
     public String getCode() {
@@ -29,11 +32,6 @@ public class LicenseDescriptor {
     }
 
     public Matcher getMatcher(String text) {
-        synchronized (regex) {
-            if (regexCompiled == null) {
-                regexCompiled = Pattern.compile(getRegex(), Pattern.CASE_INSENSITIVE);
-            }
-        }
         return regexCompiled.matcher(text);
     }
 
@@ -55,5 +53,15 @@ public class LicenseDescriptor {
     public int hashCode() {
         return Objects.hash(getCode(), getLicenseName(), getRegex());
     }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                          .add("code", code)
+                          .add("licenseName", licenseName)
+                          .add("regex", regex)
+                          .toString();
+    }
+
 
 }
