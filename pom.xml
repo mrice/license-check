@@ -10,22 +10,20 @@
 		<!--<version>7</version>-->
 	<!--</parent>-->
 
-	<groupId>at.know-center.mavenplugins</groupId>
+	<groupId>org.complykit</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
 	<version>0.5.14-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>License Check Plugin</name>
 	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
-	<url>https://git.know-center.tugraz.at/summary/?r=license-check.git</url>
+	<url>http://complykit.org</url>
 	<inceptionYear>2013</inceptionYear>
 
 	<scm>
-		<url>https://git.know-center.tugraz.at/summary/?r=license-check.git</url>
-		<connection>scm:git:ssh://jenkins@git.know-center.tugraz.at:29418/license-check.git</connection>
-		<developerConnection>scm:git:ssh://git.know-center.tugraz.at:29418/license-check.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<url>https://github.com/mrice/license-check</url>
+		<connection>scm:git:git@github.com:mrice/license-check.git</connection>
+	</scm>
 
 	<licenses>
 		<license>
@@ -255,30 +253,15 @@
 		</extensions>
 	</build>
 
-	<repositories>
-		<repository>
-			<id>kc_external</id>
-			<name>Know-Center external Maven Repository</name>
-			<layout>default</layout>
-			<url>https://nexus.know-center.tugraz.at/content/groups/public</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
 	<distributionManagement>
-		<repository>
-			<id>kc_external</id>
-			<name>KC Repository</name>
-			<url>dav:https://nexus.know-center.tugraz.at/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>kc_external</id>
-			<name>KC Repository</name>
-			<url>dav:https://nexus.know-center.tugraz.at/content/repositories/snapshots</url>
-		</snapshotRepository>
-
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
 	</distributionManagement>
 
 </project>
