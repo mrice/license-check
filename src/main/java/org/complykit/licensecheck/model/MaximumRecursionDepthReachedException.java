@@ -1,4 +1,4 @@
-package at.knowcenter.mavenplugins.licensecheck.model;
+package org.complykit.licensecheck.model;
 
 import org.apache.maven.plugin.MojoFailureException;
 

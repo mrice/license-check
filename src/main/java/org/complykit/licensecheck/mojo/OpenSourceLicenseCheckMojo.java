@@ -21,10 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package at.knowcenter.mavenplugins.licensecheck.mojo;
+package org.complykit.licensecheck.mojo;
 
-import at.knowcenter.mavenplugins.licensecheck.model.LicenseDescriptor;
-import at.knowcenter.mavenplugins.licensecheck.model.MaximumRecursionDepthReachedException;
+import org.complykit.licensecheck.model.LicenseDescriptor;
+import org.complykit.licensecheck.model.MaximumRecursionDepthReachedException;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -488,8 +488,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo {
      * @param licenseName
      * @return
      */
-    @Nullable
-    private String convertLicenseNameToCode(@Nullable final String licenseName) {
+    @Nullable String convertLicenseNameToCode(@Nullable final String licenseName) {
         if (licenseName == null) {
             return null;
         }
