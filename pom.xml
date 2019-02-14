@@ -19,12 +19,12 @@
 
 	<name>License Check Plugin</name>
 	<description>Maven plugin to report on the licenses in use and check compatibility with project goals.</description>
-	<url>http://complykit.org</url>
 	<inceptionYear>2013</inceptionYear>
 
 	<scm>
-		<url>https://github.com/mrice/license-check</url>
-		<connection>scm:git:git@github.com:mrice/license-check.git</connection>
+		<url>https://github.com/subes/license-check</url>
+		<connection>scm:git:https://github.com/subes/license-check.git</connection>
+		<tag>HEAD</tag>
 	</scm>
 
 	<licenses>
@@ -33,16 +33,6 @@
 			<url>http://www.opensource.org/licenses/mit-license.php</url>
 		</license>
 	</licenses>
-	<developers>
-		<developer>
-			<name>Michael Rice</name>
-			<email>me@michaelrice.com</email>
-			<roles>
-				<role>Developer</role>
-			</roles>
-			<timezone>-7</timezone>
-		</developer>
-	</developers>
 
 	<properties>
 		<maven.version>3.1.1</maven.version>
@@ -200,15 +190,17 @@
         </plugins>
 	</build>
 
-	<distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-	</distributionManagement>
+	<repositories>
+		<repository>
+			<id>invesdwin-oss</id>
+			<url>http://invesdwin.de/artifactory/invesdwin-oss-remote</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>invesdwin-oss</id>
+			<url>http://invesdwin.de/artifactory/invesdwin-oss-remote</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>
