@@ -112,9 +112,3 @@ or test, then you can exclude them:
 
 The idea here is that you may feel comfortable excluding some artifacts from considering. Not clear at all whether this
 solves difficult licensing issues, but you may want to do it.
-
-Trust me, I'm a lawyer.
----------------
-I hope you'll contact me with any questions or issues (or use the github issue tracker). I really (really!) hope you'll
-give me some feedback, good or bad. And yes, I really am a lawyer (licensed in Washington State and California).
-Obvious disclaimer: the purpose of this tool is not to give you legal advice, duh.
