@@ -3,8 +3,6 @@ license-check
 
 This is a fork of https://github.com/mrice/license-check. Fixes/Changes can be viewed here: https://github.com/mrice/license-check/pull/16
 
-Current version: 0.5.5-inv (14.02.2019)
-
 What is it?
 --------------
 For now, **license-check** just checks to make sure that your Maven dependencies have a license declared in their POM
@@ -31,6 +29,11 @@ of liability.
 
 How to use it
 ---------------
+Releases and snapshots are deployed to this maven repository:
+```
+http://invesdwin.de/artifactory/invesdwin-oss-remote
+```
+
 Put license-check into your build process by adding the following to your pom.xml:
 
 ```xml
@@ -40,7 +43,7 @@ Put license-check into your build process by adding the following to your pom.xm
     <plugin>
       <groupId>org.complykit</groupId>
       <artifactId>license-check-maven-plugin</artifactId>
-      <version>0.5.3</version>
+      <version>0.5.5-inv</version>
       <executions>
         <execution>
           <phase>verify</phase>
