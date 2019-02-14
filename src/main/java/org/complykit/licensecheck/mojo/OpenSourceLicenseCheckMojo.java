@@ -69,7 +69,7 @@ import org.eclipse.aether.resolution.ArtifactResult;
  *
  * @author michael.rice
  */
-@Mojo(name = "os-check")
+@Mojo(name = "os-check", threadSafe=true)
 public class OpenSourceLicenseCheckMojo extends AbstractMojo 
 {
 
@@ -172,9 +172,9 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
   public void execute() throws MojoExecutionException, MojoFailureException 
   {
 
-    getLog().info("------------------------------------------------------------------------");
-    getLog().info("VALIDATING OPEN SOURCE LICENSES                                         ");
-    getLog().info("------------------------------------------------------------------------");
+    getLog().debug("------------------------------------------------------------------------");
+    getLog().debug("VALIDATING OPEN SOURCE LICENSES                                         ");
+    getLog().debug("------------------------------------------------------------------------");
 
     final Set<String> excludeSet = getAsLowerCaseSet(excludes);
     final Set<String> blacklistSet = getAsLowerCaseSet(blacklist);
@@ -183,7 +183,7 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
     final List<Pattern> excludePatternList = getAsPatternList(excludesRegex);
 
     final Set<Artifact> artifacts = project.getDependencyArtifacts();
-    getLog().info("Validating licenses for " + artifacts.size() + " artifact(s)");
+    getLog().debug("Validating licenses for " + artifacts.size() + " artifact(s)");
 
     final Map<String, String> licenses = new HashMap<String, String>();
 
@@ -219,32 +219,21 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
 
     }
 
-    getLog().info("");
-    getLog().info("This plugin validates that the artifacts you're using have a");
-    getLog().info("license declared in the pom. It then tries to determine whether ");
-    getLog().info("the license is one of the Open Source Initiative (OSI) approved ");
-    getLog().info("licenses. If it can't find a match or if the license is on your ");
-    getLog().info("declared blacklist or not on your declared whitelist, then the build will fail.");
-    getLog().info("");
-    getLog().info("This plugin and its author are not associated with the OSI.");
-    getLog().info("Please send me feedback: me@michaelrice.com. Thanks!");
-    getLog().info("");
-    final Set<String> keys = licenses.keySet();
-    getLog().info("--[ Licenses found ]------ ");
-    for (final String artifact : keys) {
-      getLog().info("\t" + artifact + ": " + licenses.get(artifact));
-    }
-
     if (buildFails) {
+    	final Set<String> keys = licenses.keySet();
+    	getLog().info("--[ Licenses found ]------ ");
+    	for (final String artifact : keys) {
+    		getLog().info("\t" + artifact + ": " + licenses.get(artifact));
+    	}
       getLog().info("");
       getLog().info(
           "RESULT: At least one license could not be verified or appears on your blacklist or is not on your whitelist. Build fails.");
       getLog().info("");
       throw new MojoFailureException("blacklist/whitelist of unverifiable license");
     }
-    getLog().info("");
-    getLog().info("RESULT: license check complete, no issues found.");
-    getLog().info("");
+    getLog().debug("");
+    getLog().debug("RESULT: license check complete, no issues found.");
+    getLog().debug("");
 
   }
 
