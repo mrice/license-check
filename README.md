@@ -1,9 +1,9 @@
 license-check
 =============
 
-[![Build Status](https://travis-ci.org/mrice/license-check.png)](https://travis-ci.org/mrice/license-check)
+This is a fork of https://github.com/mrice/license-check. Fixes/Changes can be viewed here: https://github.com/mrice/license-check/pull/16
 
-Current version: 0.5.3 (Sep 5, 2015)
+Current version: 0.5.5-inv (14.02.2019)
 
 What is it?
 --------------
