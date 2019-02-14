@@ -20,7 +20,7 @@ Isn't there already something like this?
 **Eh, not really.** There are a few different Maven plugins for doing license "things." But the purpose of this plugin
 is (or, I should say, will be) to help you make sure you're not including licenses you don't want to. For now, however,
 it makes sure that all the artifacts you've included in the project actually declare a license that
-[complykit.org](http://www.complykit.org) recognizes as one of the [opensource.org](http://www.opensource.org/)
+is recognized as one of the [opensource.org](http://www.opensource.org/)
 registered licenses.
 
 This doesn't sound like much, but it's critically important. If the license isn't recognized or isn't declared at all,
