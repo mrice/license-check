@@ -183,14 +183,16 @@ public class OpenSourceLicenseCheckMojo extends AbstractMojo
           result = repoSystem.resolveArtifact(repoSession, request);
           getLog().info(result.toString());
         } catch (final ArtifactResolutionException e) {
-          // TODO: figure out how to deal with this one
+          getLog().error("Error reading artifact", e);
         }
 
         String licenseName = "";
-        try {
-          licenseName = recurseForLicenseName(RepositoryUtils.toArtifact(result.getArtifact()), 0);
-        } catch (IOException e) {
-          getLog().error("Error reading license information", e);
+        if (result != null) {
+            try {
+              licenseName = recurseForLicenseName(RepositoryUtils.toArtifact(result.getArtifact()), 0);
+            } catch (IOException e) {
+              getLog().error("Error reading license information", e);
+            }
         }
         String code = convertLicenseNameToCode(licenseName);
         if (code == null) {
