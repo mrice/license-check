@@ -14,7 +14,7 @@
 
 	<groupId>org.complykit</groupId>
 	<artifactId>license-check-maven-plugin</artifactId>
-	<version>0.5.4</version>
+	<version>0.5.5-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>License Check Plugin</name>
@@ -41,6 +41,15 @@
 				<role>Developer</role>
 			</roles>
 			<timezone>-7</timezone>
+		</developer>
+		<developer>
+			<name>Michael Ma</name>
+			<email>mycsoft@qq.com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+8</timezone>
+                        <url>http://myc.name</url>
 		</developer>
 	</developers>
 

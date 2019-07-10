@@ -1,7 +1,7 @@
 license-check
 =============
 
-[![Build Status](https://travis-ci.org/mrice/license-check.png)](https://travis-ci.org/mrice/license-check)
+[![Build Status](https://travis-ci.org/mycsoft/license-check.svg?branch=master)](https://travis-ci.org/mycsoft/license-check)
 
 Current version: 0.5.3 (Sep 5, 2015)
 
