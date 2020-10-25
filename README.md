@@ -31,7 +31,7 @@ How to use it
 ---------------
 Releases and snapshots are deployed to this maven repository:
 ```
-http://invesdwin.de/repo/invesdwin-oss-remote
+http://invesdwin.de/repo/invesdwin-oss-remote/
 ```
 
 Put license-check into your build process by adding the following to your pom.xml:
